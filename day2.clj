@@ -20,3 +20,21 @@
             (+ score (round-score next-round)))
           0
           strategy))
+
+(defn apply-part2-strategy [strategy]
+  (map (fn [[enemy, myself]]
+         (conj [enemy]
+               (case myself
+                 "X" (case enemy
+                       "A" "Z"
+                       "B" "X"
+                       "C" "Y")
+                 "Y" (case enemy
+                       "A" "X"
+                       "B" "Y"
+                       "C" "Z")
+                 "Z" (case enemy
+                       "A" "Y"
+                       "B" "Z"
+                       "C" "X"))))
+         strategy))
