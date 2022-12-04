@@ -17,16 +17,6 @@
           (repeat n 0)
           elves-calories))
 
-;; deprecated:
-;; (defn calories-of-top-elf [elves-calories]
-;;   (reduce (fn [a-total, b]
-;;             (let [b-total (total-calories b)]
-;;               (if (> a-total b-total)
-;;                 a-total
-;;                 b-total)))
-;;           0
-;;           elves-calories))
-
 (defn calories-of-top-elf [elves-calories]
   (first (calories-of-top-nth-elves 1 elves-calories)))
 

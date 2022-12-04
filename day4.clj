@@ -25,11 +25,10 @@
 (defn get-some-overlap [pairs]
   (filter
    (fn [[a, b]]
-     (or
-      (or (<= (first a) (first b) (second a))
-          (<= (first a) (second b) (second a)))
-      (or (<= (first b) (first a) (second b))
-          (<= (first b) (second a) (second b)))))
+     (or (<= (first a) (first b) (second a))
+         (<= (first a) (second b) (second a))
+         (<= (first b) (first a) (second b))
+         (<= (first b) (second a) (second b))))
    pairs))
 
 (defn count-some-overlap [pairs]
