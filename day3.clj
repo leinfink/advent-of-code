@@ -15,3 +15,13 @@
 
 (defn sum-priorities-of-duplicates [rucksacks]
   (reduce + (map #(get-priority (find-duplicate %)) rucksacks)))
+
+(defn get-badges [rucksacks]
+  (map (fn [rucksack-group]
+         (first
+          (apply clojure.set/intersection
+                 (map #(set (flatten %)) rucksack-group))))
+       (partition 3 rucksacks)))
+
+(defn sum-badge-priorities [badges]
+  (reduce + (map #(get-priority %) badges)))
