@@ -1,4 +1,5 @@
-(require '[clojure.string :as str])
+(ns aoc22.day2
+  (:require [clojure.string :as str]))
 
 (defn read-strategy [input]
   (map #(str/split % #" ")
@@ -38,3 +39,9 @@
                        "B" "Z"
                        "C" "X"))))
          strategy))
+
+(defn part1 [input]
+  0)
+
+(defn part2 [input]
+  1)
