@@ -1,4 +1,5 @@
-(require '[clojure.string :as str])
+(ns aoc22.day3
+  (:require [clojure.string :as str]))
 
 (defn read-rucksacks-from-input [input]
   (map #(split-at (/ (count %) 2) %)
@@ -25,3 +26,9 @@
 
 (defn sum-badge-priorities [badges]
   (reduce + (map #(get-priority %) badges)))
+
+(defn part1 [input]
+  (sum-priorities-of-duplicates (read-rucksacks-from-input input)))
+
+(defn part2 [input]
+  (sum-badge-priorities (get-badges (read-rucksacks-from-input input))))
