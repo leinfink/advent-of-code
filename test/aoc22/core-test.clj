@@ -1,6 +1,5 @@
 (ns aoc22.core-test
   (:require
-   [aoc22.day1 :as day1]
    [clojure.string :as str]
    [clojure.test :refer [deftest is]]))
 
@@ -18,9 +17,21 @@
                                :answer parse-answer}]
           [type (modifier (read-file day type))])))
 
-(deftest day1-test
-  (let [puzzle (read-puzzle 1)
-        input (:input puzzle)
-        answer (:answer puzzle)]
-    (is (= (first answer) (str (day1/part1 input))))
-    (is (= (second answer) (str (day1/part2 input))))))
+(defmacro def-daytest [day]
+  (let [namespace (str "aoc22.day" day)
+        testname (symbol (str namespace "-test"))
+        part1 (symbol (str namespace "/part1"))
+        part2 (symbol (str namespace "/part2"))]
+    `(deftest ~testname
+       (let [puzzle# (read-puzzle ~day)
+             input# (:input puzzle#)
+             answer# (:answer puzzle#)]
+         (is (= (first answer#) (str (~part1 input#))))
+         (is (= (second answer#) (str (~part2 input#))))))))
+
+(defmacro generate-daytests [max-day]
+  `(do
+     ~@(for [day (range 1 (inc max-day))]
+         `(def-daytest ~day))))
+
+(generate-daytests 2)
