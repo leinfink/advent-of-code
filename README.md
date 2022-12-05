@@ -2,6 +2,6 @@
 
 https://adventofcode.com/2022/
 
-Includes auomatic testing.
+Includes automated testing using macros.
 
 Careful, spoilers!
