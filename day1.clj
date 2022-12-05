@@ -17,6 +17,14 @@
           (repeat n 0)
           elves-calories))
 
+(defn read-input [input]
+  (->> (str/split input #"\n\n")
+       (map str/split-lines)
+       ((fn [x] (for [i x] (map #(Integer/parseInt %) i))))))
+
+(defn sorted-calories-per-elf [input]
+          ()
+
 (defn calories-of-top-elf [elves-calories]
   (first (calories-of-top-nth-elves 1 elves-calories)))
 
