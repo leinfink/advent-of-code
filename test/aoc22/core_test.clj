@@ -10,7 +10,8 @@
   (str/split-lines input))
 
 (defn read-puzzle
-  "Returns a hashmap with the input and the answers for DAY."
+  "Returns a hashmap with the puzzle input and answers for `day`.
+  Input is read without modification. Answers are split into a list."
   [day]
   (into {}
         (for [[type modifier] {:input identity :answer parse-answer}]
@@ -20,7 +21,9 @@
   (fn [& x] (symbol (apply str (conj x namespace)))))
 
 (defmacro def-daytest
-  "Writes a test for both parts of the puzzle for DAY."
+  "Writes a test for both parts of the puzzle for `day`.
+  The tested functions have to be called `part1` and `part2`
+  and be within a `day`-specific namespace."
   [day]
   (let [ns-day (ns-concat (str "aoc22.day" day))]
     `(do (require '~(ns-day))
