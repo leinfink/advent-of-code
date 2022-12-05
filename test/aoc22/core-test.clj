@@ -13,25 +13,24 @@
   "Returns a hashmap with the input and the answers for the day."
   [day]
   (into {}
-        (for [[type modifier] {:input identity
-                               :answer parse-answer}]
+        (for [[type modifier] {:input identity :answer parse-answer}]
           [type (modifier (read-file day type))])))
 
+(defn- ns-concat [namespace]
+  (fn [x] (symbol (str namespace x))))
+
 (defmacro def-daytest [day]
-  (let [namespace (str "aoc22.day" day)
-        testname (symbol (str namespace "-test"))
-        part1 (symbol (str namespace "/part1"))
-        part2 (symbol (str namespace "/part2"))]
-    `(deftest ~testname
+  (let [day-ns (ns-concat (str "aoc22.day" day))]
+    `(deftest ~(day-ns "-test")
        (let [puzzle# (read-puzzle ~day)
              input# (:input puzzle#)
              answer# (:answer puzzle#)]
-         (is (= (first answer#) (str (~part1 input#))))
-         (is (= (second answer#) (str (~part2 input#))))))))
+         (is (= (first answer#) (str (~(day-ns "/part1") input#))))
+         (is (= (second answer#) (str (~(day-ns "/part2") input#))))))))
 
 (defmacro generate-daytests [max-day]
   `(do
      ~@(for [day (range 1 (inc max-day))]
          `(def-daytest ~day))))
 
-(generate-daytests 4)
+(generate-daytests 3)
