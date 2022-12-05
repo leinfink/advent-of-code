@@ -2,4 +2,5 @@
 
 https://adventofcode.com/2022/
 
-careful, spoilers
+Includes auomatic testing.
+Careful, spoilers!
