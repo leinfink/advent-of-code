@@ -7,5 +7,6 @@
   (slurp (str "inputs/aoc22/day" day)))
 
 (deftest day1-test
-  (is (= (day1/part1 (read-input 1))
-         70720)))
+  (let [input (read-input 1)]
+    (is (= (day1/part1 input) 70720))
+    (is (= (day1/part2 input) 207148))))
