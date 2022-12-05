@@ -1,7 +1,6 @@
 # Advent of Code 2022 in Clojure
 
-https://adventofcode.com/2022/
+Clojure solutions for [Advent of Code 2022](https://adventofcode.com/2022/). **Careful, may contain spoilers!**
 
-Includes automated testing. Solutions should provide functions 'part1' and 'part2' that take the input string and return the answer.
+Includes a tiny automated testing tool using macros. Solutions (called `dayX.clj`) should provide two functions `part1 [str]` and `part2 [str]` that take the input string and return the answer, both of which should be supplied in the `inputs` folder.
 
-Careful, spoilers!
