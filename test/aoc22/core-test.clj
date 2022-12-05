@@ -34,4 +34,4 @@
      ~@(for [day (range 1 (inc max-day))]
          `(def-daytest ~day))))
 
-(generate-daytests 2)
+(generate-daytests 4)

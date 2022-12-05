@@ -41,7 +41,7 @@
          strategy))
 
 (defn part1 [input]
-  0)
+  (get-scores (read-strategy input)))
 
 (defn part2 [input]
-  1)
+  (get-scores (apply-part2-strategy (read-strategy input))))

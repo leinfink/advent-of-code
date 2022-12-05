@@ -1,4 +1,5 @@
-(require '[clojure.string :as str])
+(ns aoc22.day4
+  (:require [clojure.string :as str]))
 
 (defn read-pairs-from-input [input]
   (map
@@ -33,3 +34,9 @@
 
 (defn count-some-overlap [pairs]
   (count (get-some-overlap pairs)))
+
+(defn part1 [input]
+  (count-complete-containments (read-pairs-from-input input)))
+
+(defn part2 [input]
+  (count-some-overlap (read-pairs-from-input input)))
