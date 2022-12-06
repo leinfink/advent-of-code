@@ -4,8 +4,8 @@
 ;; easily extensible, infinite lazy-seq of the shapes in ascending order
 (defn ranking [] (cycle [:rock :paper :scissors]))
 
-(def scores-outcome {:win 6 :draw 3 :loss 0})
-(def scores-shape {:rock 1 :paper 2 :scissors 3})
+(def scores-outcome {:win 6, :draw 3, :loss 0})
+(def scores-shape {:rock 1, :paper 2, :scissors 3})
 
 (defn- first-after [pred coll]
   (when-let [s (seq coll)]
@@ -16,7 +16,7 @@
 (defn- last-before [pred coll]
   (loop [prev nil, coll coll]
     (when-let [s (seq coll)]
-      ;; if prev is nil, we are at the beginning and should wait for the next cycle
+      ;; if prev is nil, we are at the start and should wait for the next cycle
       (if (and (pred (first s)) (some? prev))
        prev
        (recur (first s) (next s))))))
@@ -31,8 +31,7 @@
   [x]
   (last-before #{x} (ranking)))
 
-(defn beats? [x y]
-  (= x (superior y)))
+(defn beats? [x y] (= x (superior y)))
 
 (defn outcome [[x, y]]
   (cond
@@ -54,13 +53,16 @@
 (defn solve [input read-fn]
   (sum-scores (read-strategy input read-fn)))
 
-(def read-enemy {"A" :rock "B" :paper "C" :scissors})
-(def read-me-1 {"X" :rock "Y" :paper "Z" :scissors})
-(def read-me-2 {"X" inferior, "Y" identity, "Z" superior})
+(def read-enemy {"A" :rock, "B" :paper, "C" :scissors})
 
-(defn part1 [input]
-  (solve input (fn [[x, y]] [(read-enemy x), (read-me-1 y)])))
+(defn part1-reader [[x, y]]
+  (let [read-me {"X" :rock, "Y" :paper, "Z" :scissors}]
+    [(read-enemy x), (read-me y)]))
 
-(defn part2 [input]
-  (solve input (fn [[x, y]] (let [enemy (read-enemy x)]
-                              [enemy, ((read-me-2 y) enemy)]))))
+(defn part2-reader [[x, y]]
+  (let [read-me {"X" inferior, "Y" identity, "Z" superior}
+        enemy (read-enemy x)]
+     [enemy, ((read-me y) enemy)]))
+
+(defn part1 [input] (solve input part1-reader))
+(defn part2 [input] (solve input part2-reader))
