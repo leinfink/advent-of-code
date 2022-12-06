@@ -1,1 +1,3 @@
-{:paths ["src" "test"]}
+{:paths ["src" "test"]
+ :aliases {:kibit {:extra-deps {tvaughan/kibit-runner {:mvn/version "0.1.0"}}
+                   :main-opts ["-m" "kibit-runner.cmdline"]}}}

@@ -1,7 +1,7 @@
 (ns aoc22.day2
   (:require [clojure.string :as str]))
 
-;; infinite lazy-seq of the shapes in ascending order
+;; Infinite lazy-seq of the shapes in ascending order.
 (defn ranking [] (cycle [:rock :paper :scissors]))
 
 (defn- first-after [pred coll]
@@ -14,7 +14,7 @@
   (loop [prev nil, coll coll]
     (when-let [s (seq coll)]
       (if (and (pred (first s))
-               (some? prev)) ; skip the very first shape, which has no prev
+               (some? prev)) ; Skip the very first shape, which has no prev.
         prev
         (recur (first s) (next s))))))
 

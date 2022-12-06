@@ -17,7 +17,7 @@
              [type (modifier (read-file day type))])))
 
 (defn- sym-concat [s & xs]
-  (symbol (apply str (conj xs s))))
+  (symbol (str/join (conj xs s))))
 
 (defmacro test-part [ns puzzle part]
   `(testing ~(str "Part " part)
