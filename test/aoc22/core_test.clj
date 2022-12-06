@@ -21,9 +21,9 @@
 
 (defmacro test-part [ns puzzle part]
   `(testing ~(str "Part " part)
-      (is (= (nth (:answer ~puzzle) (dec ~part))
-             (str (~(sym-concat ns "/part" part)
-                   (:input ~puzzle)))))))
+     (is (= (nth (:answer ~puzzle) (dec ~part))
+            (str (~(sym-concat ns "/part" part)
+                  (:input ~puzzle)))))))
 
 (defmacro def-daytest
   "Writes a test for both parts of the puzzle for `day`.
