@@ -1,6 +1,7 @@
 (ns aoc22.day2
   (:require [clojure.string :as str]))
 
+;; infinite lazy-seq of the shapes in ascending order
 (defn ranking [] (cycle [:rock :paper :scissors]))
 
 (def scores-outcome {:win 6 :draw 3 :loss 0})
@@ -15,7 +16,8 @@
 (defn- last-before [pred coll]
   (loop [prev nil, coll coll]
     (when-let [s (seq coll)]
-     (if (and (pred (first s)) (some? prev))
+      ;; if prev is nil, we are at the beginning and should wait for the next cycle
+      (if (and (pred (first s)) (some? prev))
        prev
        (recur (first s) (next s))))))
 
