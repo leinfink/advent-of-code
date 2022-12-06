@@ -18,25 +18,26 @@
           [type (modifier (read-file day type))])))
 
 (defn- ns-concat [namespace]
-  (fn [& x] (symbol (apply str (conj x namespace)))))
+  (fn [& xs] (symbol (apply str (conj xs namespace)))))
+
+(defn- test-part [ns-day puzzle part]
+  `(testing ~(str "Part " part)
+     (is (= (nth (:answer ~puzzle) (dec ~part))
+            (str (~(ns-day "/part" part)
+                  (:input ~puzzle)))))))
 
 (defmacro def-daytest
   "Writes a test for both parts of the puzzle for `day`.
   The tested functions have to be called `part1` and `part2`
   and be within a `day`-specific namespace."
   [day]
-  (let [ns-day (ns-concat (str "aoc22.day" day))]
+  (let [ns-day (ns-concat (str "aoc22.day" day))
+        puzzle (gensym)]
     `(do (require '~(ns-day))
          (deftest ~(ns-day "-test")
-           (let [puzzle# (read-puzzle ~day)
-                 input# (:input puzzle#)
-                 answer# (:answer puzzle#)]
-             (testing "Part 1"
-               (is (= (first answer#)
-                      (str (~(ns-day "/part1") input#)))))
-             (testing "Part 2"
-               (is (= (second answer#)
-                      (str (~(ns-day "/part2") input#))))))))))
+           (let [~puzzle (read-puzzle ~day)]
+             ~@(for [part [1 2]]
+                 (test-part ns-day puzzle part)))))))
 
 (defmacro generate-daytests [max-day]
   `(do
