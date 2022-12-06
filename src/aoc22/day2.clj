@@ -5,7 +5,6 @@
 
 (def scores-outcome {:win 6 :draw 3 :loss 0})
 (def scores-shape {:rock 1 :paper 2 :scissors 3})
-(def read-enemy {"A" :rock "B" :paper "C" :scissors})
 
 (defn- first-after [pred coll]
   (when-let [s (seq coll)]
@@ -13,18 +12,25 @@
       (fnext s)
       (recur pred (next s)))))
 
+(defn- last-before [pred coll]
+  (loop [prev nil, coll coll]
+    (when-let [s (seq coll)]
+     (if (and (pred (first s)) (some? prev))
+       prev
+       (recur (first s) (next s))))))
+
 (defn superior
   "Return the shape that wins against `x`."
   [x]
   (first-after #{x} (ranking)))
 
-(defn beats? [x y]
-  (= x (superior y)))
-
 (defn inferior
   "Return the shape that loses against `x`."
   [x]
-  (first-after #(beats? % x) (ranking)))
+  (last-before #{x} (ranking)))
+
+(defn beats? [x y]
+  (= x (superior y)))
 
 (defn outcome [[x, y]]
   (cond
@@ -37,8 +43,7 @@
      (scores-outcome (outcome [me, enemy]))))
 
 (defn sum-scores [strategy]
-  (->> (map score strategy)
-       (reduce +)))
+  (reduce + (map score strategy)))
 
 (defn read-strategy [input read-fn]
   (for [round (str/split-lines input)]
@@ -47,6 +52,7 @@
 (defn solve [input read-fn]
   (sum-scores (read-strategy input read-fn)))
 
+(def read-enemy {"A" :rock "B" :paper "C" :scissors})
 (def read-me-1 {"X" :rock "Y" :paper "Z" :scissors})
 (def read-me-2 {"X" inferior, "Y" identity, "Z" superior})
 
