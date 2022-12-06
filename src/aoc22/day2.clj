@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]))
 
 ;; infinite lazy-seq of the shapes in ascending order
+;; easily extensible
 (defn ranking [] (cycle [:rock :paper :scissors]))
 
 (def scores-outcome {:win 6 :draw 3 :loss 0})
