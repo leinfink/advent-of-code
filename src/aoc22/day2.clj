@@ -4,9 +4,6 @@
 ;; infinite lazy-seq of the shapes in ascending order
 (defn ranking [] (cycle [:rock :paper :scissors]))
 
-(def scores-outcome {:win 6, :draw 3, :loss 0})
-(def scores-shape {:rock 1, :paper 2, :scissors 3})
-
 (defn- first-after [pred coll]
   (when-let [s (seq coll)]
     (if (pred (first s))
@@ -16,28 +13,23 @@
 (defn- last-before [pred coll]
   (loop [prev nil, coll coll]
     (when-let [s (seq coll)]
-      ;; if prev is nil, we are at the start and should wait for the next cycle
-      (if (and (pred (first s)) (some? prev))
-       prev
-       (recur (first s) (next s))))))
+      (if (and (pred (first s))
+               (some? prev)) ; skip the very first shape, which has no prev
+        prev
+        (recur (first s) (next s))))))
 
-(defn superior
-  "Return the shape that wins against `x`."
-  [x]
-  (first-after #{x} (ranking)))
+(defn superior [x] (first-after #{x} (ranking)))
 
-(defn inferior
-  "Return the shape that loses against `x`."
-  [x]
-  (last-before #{x} (ranking)))
-
-(defn beats? [x y] (= x (superior y)))
+(defn inferior [x] (last-before #{x} (ranking)))
 
 (defn outcome [[x, y]]
-  (cond
-    (beats? x y) :win
-    (beats? y x) :loss
-    :else :draw))
+  (condp = x
+    (superior y) :win
+    (inferior y) :loss
+    :draw))
+
+(def scores-outcome {:win 6, :draw 3, :loss 0})
+(def scores-shape {:rock 1, :paper 2, :scissors 3})
 
 (defn score [[enemy, me]]
   (+ (scores-shape me)
@@ -54,15 +46,16 @@
   (sum-scores (read-strategy input read-fn)))
 
 (def read-enemy {"A" :rock, "B" :paper, "C" :scissors})
+(def read-me-1  {"X" :rock, "Y" :paper, "Z" :scissors})
+(def read-me-2  {"X" inferior, "Y" identity, "Z" superior})
 
 (defn part1-reader [[x, y]]
-  (let [read-me {"X" :rock, "Y" :paper, "Z" :scissors}]
-    [(read-enemy x), (read-me y)]))
+  [(read-enemy x), (read-me-1 y)])
 
 (defn part2-reader [[x, y]]
-  (let [read-me {"X" inferior, "Y" identity, "Z" superior}
-        enemy (read-enemy x)]
-     [enemy, ((read-me y) enemy)]))
+  (let [enemy (read-enemy x)]
+    [enemy, ((read-me-2 y) enemy)]))
 
 (defn part1 [input] (solve input part1-reader))
+
 (defn part2 [input] (solve input part2-reader))
