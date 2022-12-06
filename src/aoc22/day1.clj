@@ -2,8 +2,8 @@
   (:require [clojure.string :as str]))
 
 (defn parse [input]
-  (for [elves (str/split input #"\n\n")
-        :let [calories (str/split-lines elves)]]
+  (for [elf (str/split input #"\n\n")
+        :let [calories (str/split-lines elf)]]
     (map #(Integer/parseInt %) calories)))
 
 (defn sorted-calories [elves]
