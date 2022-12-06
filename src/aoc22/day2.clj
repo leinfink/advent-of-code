@@ -1,8 +1,7 @@
 (ns aoc22.day2
   (:require [clojure.string :as str]))
 
-;; infinite lazy-seq of the shapes in ascending order
-;; easily extensible
+;; easily extensible, infinite lazy-seq of the shapes in ascending order
 (defn ranking [] (cycle [:rock :paper :scissors]))
 
 (def scores-outcome {:win 6 :draw 3 :loss 0})
