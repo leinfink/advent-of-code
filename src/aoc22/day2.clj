@@ -1,47 +1,58 @@
 (ns aoc22.day2
   (:require [clojure.string :as str]))
 
-(defn read-strategy [input]
-  (map #(str/split % #" ")
-       (str/split-lines input)))
+(defn ranking [] (cycle [:rock :paper :scissors]))
 
-(defn round-score [[enemy, myself]]
-  (let [enemy-points ({"A" 1, "B" 2, "C" 3} enemy)
-        my-points  ({"X" 1, "Y" 2, "Z" 3} myself)]
-    (cond
-      (= enemy-points my-points) (+ 3 my-points)
-      (= my-points (case enemy-points
-                     1 2
-                     2 3
-                     3 1)) (+ 6 my-points)
-      :else my-points)))
+(def scores-outcome {:win 6 :draw 3 :loss 0})
+(def scores-shape {:rock 1 :paper 2 :scissors 3})
+(def read-enemy {"A" :rock "B" :paper "C" :scissors})
 
-(defn get-scores [strategy]
-  (reduce (fn [score next-round]
-            (+ score (round-score next-round)))
-          0
-          strategy))
+(defn- first-after [pred coll]
+  (when-let [s (seq coll)]
+    (if (pred (first s))
+      (fnext s)
+      (recur pred (next s)))))
 
-(defn apply-part2-strategy [strategy]
-  (map (fn [[enemy, myself]]
-         (conj [enemy]
-               (case myself
-                 "X" (case enemy
-                       "A" "Z"
-                       "B" "X"
-                       "C" "Y")
-                 "Y" (case enemy
-                       "A" "X"
-                       "B" "Y"
-                       "C" "Z")
-                 "Z" (case enemy
-                       "A" "Y"
-                       "B" "Z"
-                       "C" "X"))))
-         strategy))
+(defn superior
+  "Return the shape that wins against `x`."
+  [x]
+  (first-after #{x} (ranking)))
+
+(defn beats? [x y]
+  (= x (superior y)))
+
+(defn inferior
+  "Return the shape that loses against `x`."
+  [x]
+  (first-after #(beats? % x) (ranking)))
+
+(defn outcome [[x, y]]
+  (cond
+    (beats? x y) :win
+    (beats? y x) :loss
+    :else :draw))
+
+(defn score [[enemy, me]]
+  (+ (scores-shape me)
+     (scores-outcome (outcome [me, enemy]))))
+
+(defn sum-scores [strategy]
+  (->> (map score strategy)
+       (reduce +)))
+
+(defn read-strategy [input read-fn]
+  (for [round (str/split-lines input)]
+    (read-fn (str/split round #" "))))
+
+(defn solve [input read-fn]
+  (sum-scores (read-strategy input read-fn)))
+
+(def read-me-1 {"X" :rock "Y" :paper "Z" :scissors})
+(def read-me-2 {"X" inferior, "Y" identity, "Z" superior})
 
 (defn part1 [input]
-  (get-scores (read-strategy input)))
+  (solve input (fn [[x, y]] [(read-enemy x), (read-me-1 y)])))
 
 (defn part2 [input]
-  (get-scores (apply-part2-strategy (read-strategy input))))
+  (solve input (fn [[x, y]] (let [enemy (read-enemy x)]
+                              [enemy, ((read-me-2 y) enemy)]))))
