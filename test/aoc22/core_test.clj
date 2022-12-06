@@ -13,9 +13,8 @@
   "Returns a hashmap with the puzzle input and answers for `day`.
   Input is read without modification. Answers are split into a list."
   [day]
-  (into {}
-        (for [[type modifier] {:input identity, :answer parse-answer}]
-          [type (modifier (read-file day type))])))
+  (into {} (for [[type modifier] {:input identity, :answer parse-answer}]
+             [type (modifier (read-file day type))])))
 
 (defn- sym-concat [s & xs]
   (symbol (apply str (conj xs s))))
@@ -32,11 +31,12 @@
   and be within a `day`-specific namespace."
   [day]
   (let [ns (str "aoc22.day" day)]
-    `(do (require '~(symbol ns))
-         (deftest ~(sym-concat ns "-test")
-           (let [puzzle# (read-puzzle ~day)]
-             (test-part ~ns puzzle# 1)
-             (test-part ~ns puzzle# 2))))))
+    `(do
+       (require '~(symbol ns))
+       (deftest ~(sym-concat ns "-test")
+         (let [puzzle# (read-puzzle ~day)]
+           (test-part ~ns puzzle# 1)
+           (test-part ~ns puzzle# 2))))))
 
 (defmacro generate-daytests [max-day]
   `(do
