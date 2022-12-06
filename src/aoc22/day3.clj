@@ -1,34 +1,31 @@
 (ns aoc22.day3
   (:require [clojure.string :as str]))
 
-(defn read-rucksacks-from-input [input]
+(defn read-rucksacks [input]
   (map #(split-at (/ (count %) 2) %)
        (str/split-lines input)))
 
 (defn find-duplicate [[comp1, comp2]]
   (first (clojure.set/intersection (set comp1) (set comp2))))
 
-(defn get-priority [item]
+(defn priority [item]
   (- (int item)
-     (if (Character/isUpperCase item)
-       (- 64 26)
-       96)))
+     (if (Character/isUpperCase item) (- 64 26) 96)))
 
-(defn sum-priorities-of-duplicates [rucksacks]
-  (reduce + (map #(get-priority (find-duplicate %)) rucksacks)))
+(defn badges [rucksacks]
+  (for [group (partition 3 rucksacks)]
+    (->> (map #(set (flatten %)) group)
+         (apply clojure.set/intersection)
+         first)))
 
-(defn get-badges [rucksacks]
-  (map (fn [rucksack-group]
-         (first
-          (apply clojure.set/intersection
-                 (map #(set (flatten %)) rucksack-group))))
-       (partition 3 rucksacks)))
+(defn sum-duplicate-priorities [rucksacks]
+  (reduce + (map #(priority (find-duplicate %)) rucksacks)))
 
-(defn sum-badge-priorities [badges]
-  (reduce + (map #(get-priority %) badges)))
+(defn sum-badge-priorities [rucksacks]
+  (reduce + (map priority (badges rucksacks))))
 
 (defn part1 [input]
-  (sum-priorities-of-duplicates (read-rucksacks-from-input input)))
+  (sum-duplicate-priorities (read-rucksacks input)))
 
 (defn part2 [input]
-  (sum-badge-priorities (get-badges (read-rucksacks-from-input input))))
+  (sum-badge-priorities (read-rucksacks input)))
