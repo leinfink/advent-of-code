@@ -1,42 +1,25 @@
 (ns aoc22.day4
   (:require [clojure.string :as str]))
 
-(defn read-pairs-from-input [input]
-  (map
-   (fn [pair]
-     (map
-      (fn [range]
-        (map #(Integer/parseInt %) (str/split range #"-")))
-      (str/split pair #",")))
-   (str/split-lines input)))
+(defn read-pairs [input]
+  (for [pair (str/split-lines input)]
+    (for [assignment (str/split pair #",")]
+      (for [section (str/split assignment #"-")]
+        (Integer/parseInt section)))))
 
-(defn get-complete-containments [pairs]
-  (filter
-   (fn [[a, b]]
-     (or
-      (and (<= (first a) (first b))
-           (>= (second a) (second b)))
-      (and (<= (first b) (first a))
-           (>= (second b) (second a)))))
-   pairs))
+(defn containments [[[a1, a2], [b1, b2]]]
+  (or (<= a1 b1 b2 a2)
+      (<= b1 a1 a2 b2)))
 
-(defn count-complete-containments [pairs]
-  (count (get-complete-containments pairs)))
+(defn overlap [[[a1, a2], [b1, b2]]]
+  (or (<= a1 b1 a2)
+      (<= b1 a1 b2)))
 
-(defn get-some-overlap [pairs]
-  (filter
-   (fn [[a, b]]
-     (or (<= (first a) (first b) (second a))
-         (<= (first a) (second b) (second a))
-         (<= (first b) (first a) (second b))
-         (<= (first b) (second a) (second b))))
-   pairs))
-
-(defn count-some-overlap [pairs]
-  (count (get-some-overlap pairs)))
+(defn- count-pred [pred coll]
+  (count (filter pred coll)))
 
 (defn part1 [input]
-  (count-complete-containments (read-pairs-from-input input)))
+  (count-pred containments (read-pairs input)))
 
 (defn part2 [input]
-  (count-some-overlap (read-pairs-from-input input)))
+  (count-pred overlap (read-pairs input)))
