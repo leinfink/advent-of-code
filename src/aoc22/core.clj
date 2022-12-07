@@ -1,8 +1,11 @@
 (ns aoc22.core)
 
 (defmacro for->
-  "Threads the expr through nested list comprehensions, using the forms as collection-exprs.
-  Inserts the last form in the body of the innermost list comprehension. For instance:
+  "Threads the expr through nested list comprehensions.
+  Uses the forms as collection-exprs, with the binding of the previous
+  collection-expr added as the second element (as in ->).
+  Inserts the last form in the body of the innermost list comprehension.
+  For instance:
 
   (for-> expr
          form1
