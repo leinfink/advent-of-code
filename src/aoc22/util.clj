@@ -30,3 +30,22 @@
            (for-> ~new-x ~@(next forms))))
       (list (first forms) x))
     x))
+
+(defn after-first
+  "Returns the item directly after the first item in coll for which
+  (pred item) returns logical true."
+  [pred coll]
+  (when-let [s (seq coll)]
+    (if (pred (first s))
+      (fnext s)
+      (recur pred (next s)))))
+
+(defn before-first
+  "Returns the item directly before the first item in coll for which
+  (pred item) returns logical true."
+  [pred coll]
+  (loop [prev nil, coll coll]
+    (when-let [s (seq coll)]
+      (if (pred (first s))
+        prev
+        (recur (first s) (next s))))))

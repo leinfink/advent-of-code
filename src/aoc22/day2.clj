@@ -1,26 +1,16 @@
 (ns aoc22.day2
-  (:require [clojure.string :as str]))
+  (:require
+   [aoc22.util :refer [after-first before-first]]
+   [clojure.string :as str]))
 
 ;; Infinite lazy-seq of the shapes in ascending order.
 (defn ranking [] (cycle [:rock :paper :scissors]))
 
-(defn- first-after [pred coll]
-  (when-let [s (seq coll)]
-    (if (pred (first s))
-      (fnext s)
-      (recur pred (next s)))))
+(defn superior [x] (after-first #{x} (ranking)))
 
-(defn- last-before [pred coll]
-  (loop [prev nil, coll coll]
-    (when-let [s (seq coll)]
-      (if (and (pred (first s))
-               (some? prev)) ; Skip the very first shape, which has no prev.
-        prev
-        (recur (first s) (next s))))))
-
-(defn superior [x] (first-after #{x} (ranking)))
-
-(defn inferior [x] (last-before #{x} (ranking)))
+(defn inferior [x]
+  (or (before-first #{x} (ranking))
+      (before-first #{x} (rest (ranking))))) ; Get the first shape's inferior.
 
 (defn outcome [[x, y]]
   (condp = x
@@ -34,7 +24,6 @@
 (defn score [[enemy, me]]
   (+ (scores-shape me)
      (scores-outcome (outcome [me, enemy]))))
-
 (defn sum-scores [strategy]
   (reduce + (map score strategy)))
 
