@@ -1,18 +1,7 @@
 (ns aoc22.day4
-  (:require [clojure.string :as str]))
-
-(defmacro for->
-  [x & forms]
-  (if forms
-      (if (seq (rest forms))
-        (let [form (first forms), new-x (gensym)]
-          `(for [~new-x
-                 ~(if (seq? form)
-                    (with-meta `(~(first form) ~x ~@(next form)) (meta form))
-                    (list form x))]
-             (for-> ~new-x ~@(next forms))))
-        (list (first forms) x))
-    x))
+  (:require
+   [aoc22.core :refer [for->]]
+   [clojure.string :as str]))
 
 (defn read-pairs [input]
   (for-> input
