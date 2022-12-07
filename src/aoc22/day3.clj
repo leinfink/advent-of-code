@@ -1,12 +1,15 @@
 (ns aoc22.day3
-  (:require [clojure.string :as str]))
+  (:require
+   [clojure.set :as set]
+   [clojure.string :as str]))
 
 (defn read-rucksacks [input]
   (map #(split-at (/ (count %) 2) %)
        (str/split-lines input)))
 
 (defn find-duplicate [[comp1, comp2]]
-  (first (clojure.set/intersection (set comp1) (set comp2))))
+  (first (set/intersection (set comp1)
+                           (set comp2))))
 
 (defn priority [item]
   (- (int item)
@@ -14,15 +17,20 @@
 
 (defn badges [rucksacks]
   (for [group (partition 3 rucksacks)]
-    (->> (map #(set (flatten %)) group)
-         (apply clojure.set/intersection)
+    (->> group
+         (map #(set (flatten %)))
+         (apply set/intersection)
          first)))
 
 (defn sum-duplicate-priorities [rucksacks]
-  (reduce + (map #(priority (find-duplicate %)) rucksacks)))
+  (->> rucksacks
+       (map #(priority (find-duplicate %)))
+       (reduce +)))
 
 (defn sum-badge-priorities [rucksacks]
-  (reduce + (map priority (badges rucksacks))))
+  (->> (badges rucksacks)
+       (map priority)
+       (reduce +)))
 
 (defn part1 [input]
   (sum-duplicate-priorities (read-rucksacks input)))
