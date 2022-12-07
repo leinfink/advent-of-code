@@ -1,6 +1,6 @@
 (ns aoc22.day4
   (:require
-   [aoc22.core :refer [for->]]
+   [aoc22.util :refer [for->]]
    [clojure.string :as str]))
 
 (defn read-pairs [input]
