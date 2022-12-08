@@ -18,33 +18,25 @@
     (inferior y) :loss
     :draw))
 
-(def scores-outcome {:win 6, :draw 3, :loss 0})
-(def scores-shape {:rock 1, :paper 2, :scissors 3})
-
 (defn score [[enemy, me]]
-  (+ (scores-shape me)
-     (scores-outcome (outcome [me, enemy]))))
-(defn sum-scores [strategy]
-  (reduce + (map score strategy)))
+  (+ (me {:rock 1, :paper 2, :scissors 3})
+     ((outcome [me, enemy]) {:win 6, :draw 3, :loss 0})))
 
 (defn read-strategy [input read-fn]
   (for [round (str/split-lines input)]
     (read-fn (str/split round #" "))))
 
 (defn solve [input read-fn]
-  (sum-scores (read-strategy input read-fn)))
+  (reduce + (map score (read-strategy input read-fn))))
 
 (def read-enemy {"A" :rock, "B" :paper, "C" :scissors})
-(def read-me-1  {"X" :rock, "Y" :paper, "Z" :scissors})
-(def read-me-2  {"X" inferior, "Y" identity, "Z" superior})
 
-(defn part1-reader [[x, y]]
-  [(read-enemy x), (read-me-1 y)])
+(defn part1 [input]
+  (let [read-me {"X" :rock, "Y" :paper, "Z" :scissors}]
+    (solve input (fn [[x, y]] [(read-enemy x), (read-me y)]))))
 
-(defn part2-reader [[x, y]]
-  (let [enemy (read-enemy x)]
-    [enemy, ((read-me-2 y) enemy)]))
-
-(defn part1 [input] (solve input part1-reader))
-
-(defn part2 [input] (solve input part2-reader))
+(defn part2 [input]
+  (let [read-me {"X" inferior, "Y" identity, "Z" superior}]
+    (solve input (fn [[x, y]]
+                   (let [e (read-enemy x)]
+                     [e, ((read-me y) e)])))))
