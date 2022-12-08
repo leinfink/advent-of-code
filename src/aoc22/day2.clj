@@ -36,7 +36,7 @@
     (solve input (fn [[x, y]] [(read-enemy x), (read-me y)]))))
 
 (defn part2 [input]
-  (let [read-me {"X" inferior, "Y" identity, "Z" superior}]
+  (let [read-me-fn {"X" inferior, "Y" identity, "Z" superior}]
     (solve input (fn [[x, y]]
-                   (let [e (read-enemy x)]
-                     [e, ((read-me y) e)])))))
+                   (let [enemy (read-enemy x)]
+                     [enemy, ((read-me-fn y) enemy)])))))
