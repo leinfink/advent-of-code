@@ -1,10 +1,13 @@
 (ns aoc22.day1
-  (:require [clojure.string :as str]))
+  (:require
+   [aoc22.util :refer [for->]]
+   [clojure.string :as str]))
 
 (defn parse [input]
-  (for [elf (str/split input #"\n\n")
-        :let [calories (str/split-lines elf)]]
-    (map #(Integer/parseInt %) calories)))
+  (for-> input
+         (#(str/split % #"\n\n"))
+         str/split-lines
+         Integer/parseInt))
 
 (defn sorted-calories [elves]
   (sort > (map #(reduce + %) elves)))
