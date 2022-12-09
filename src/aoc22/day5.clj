@@ -4,7 +4,7 @@
    [clojure.string :as str]))
 
 (defn parse-rows [s]
-  (for [line (str/split-lines (str/trimr (first (str/split s #"1"))))]
+  (for [line (butlast (str/split-lines s))]
     (flatten (partition 1 4 (rest line)))))
 
 (defn parse-stacks [s]
