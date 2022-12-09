@@ -9,8 +9,7 @@
 
 (defn parse-stacks [s]
   (reduce (fn [prev-row, row]
-            (map #(if (#{\space} %2) %1 (conj %1 %2))
-                 prev-row row))
+            (map #(if (#{\space} %2) %1 (conj %1 %2)) prev-row row))
           (repeat '()) ; Use lists, since we operate with stacks.
           (reverse (parse-rows s)))) ; But starting stacks need to be flipped.
 
