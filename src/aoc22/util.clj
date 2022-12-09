@@ -31,6 +31,10 @@
       (list (first forms) x))
     x))
 
+(defmacro str-replace-> [s & res-pairs]
+  `(-> ~s ~@(for [[re, repl] (partition 2 res-pairs)]
+              `(str/replace ~re ~repl))))
+
 (defn after-first
   "Returns the item directly after the first item in coll for which
   (pred item) returns logical true."
