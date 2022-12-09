@@ -1,6 +1,6 @@
 (ns aoc22.day5
   (:require
-   [aoc22.util :refer [for->]]
+   [aoc22.util :refer [for-> str-replace->]]
    [clojure.string :as str]))
 
 (defn parse-rows [s]
@@ -11,62 +11,40 @@
   (reduce (fn [prev-row, row]
             (map #(if (#{\space} %2) %1 (conj %1 %2))
                  prev-row row))
-          (repeat '())
-          (reverse (parse-rows s))))
+          (repeat '()) ; Use lists, since we operate with stacks.
+          (reverse (parse-rows s)))) ; But starting stacks need to be flipped.
 
 (defn parse-moves [s]
   (for [line (str/split-lines s)]
     (map #(Integer/parseInt %)
-         (-> line
-             (str/replace #"move " "")
-             (str/replace #" from " " ")
-             (str/replace #" to " " ")
+         (-> (str-replace-> line, #"move " "", #" from " " ", #" to " " ")
              (str/split #" ")))))
 
-(defn move-fn [stacks [cnt, from, to]]
-  (let [from (dec from), to (dec to)]
-       (loop [i cnt, stacks stacks]
-         (let [peek-itm (peek (nth stacks from))]
-           (if (zero? i)
-             stacks
-             (recur (dec i)
-                    (map-indexed (fn [idx itm] (condp = idx
-                                                 from (pop itm)
-                                                 to (conj itm peek-itm)
-                                                 itm))
-                                 stacks)))))))
+(defn move-combined [stacks [cnt, from, to]]
+  (let [peek-itm (take cnt (nth stacks from))]
+    (map-indexed (fn [idx itm] (condp = idx
+                                 from (nthnext itm cnt)
+                                 to (concat peek-itm itm)
+                                 itm))
+                 stacks)))
 
+(defn move-single [stacks [cnt, from, to]]
+  (loop [i cnt, stacks stacks]
+    (if (zero? i)
+      stacks
+      (recur (dec i) (move-combined stacks [1, from, to])))))
 
-(defn move-fn-2 [stacks [cnt, from, to :as moves]]
-  (prn stacks)
-  (let [from (dec from), to (dec to)]
-    (let [peek-itm (take cnt (nth stacks from))]
-      (map-indexed (fn [idx itm]
-                     (condp = idx
-                       from (nthnext itm cnt)
-                       to (concat peek-itm itm)
-                       itm))
-                   stacks))))
-
-
-(defn make-moves [combined starting-stacks moves]
-  (reduce (if combined
-            move-fn-2
-            move-fn)
+(defn make-moves [starting-stacks moves mv-fn]
+  (reduce (fn [stk [cnt, from, to]] (mv-fn stk [cnt, (dec from) (dec to)]))
           starting-stacks
           moves))
 
-(defn read-input [s]
-  (let [input (str/split s #"\n\n")]
-    [(parse-stacks (first input))
-     (parse-moves (second input))]))
+(defn solve [s & {:keys [move-fn]}]
+  (let [[stk, mvs] (str/split s #"\n\n")]
+    (->> (make-moves (parse-stacks stk) (parse-moves mvs) move-fn)
+         (map first)
+         (apply str))))
 
-(defn part1 [input]
-  (->> (for [stack (apply make-moves false (read-input input))]
-         (peek stack))
-       (apply str)))
+(defn part1 [input] (solve input :move-fn move-single))
 
-(defn part2 [input]
-  (->> (for [stack (apply make-moves true (read-input input))]
-         (first stack))
-       (apply str)))
+(defn part2 [input] (solve input :move-fn move-combined))
