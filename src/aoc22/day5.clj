@@ -20,12 +20,11 @@
              (str/split #" ")))))
 
 (defn move-combined [stacks [cnt, from, to]]
-  (let [peek-itm (take cnt (nth stacks from))]
-    (map-indexed (fn [idx itm] (condp = idx
-                                 from (nthnext itm cnt)
-                                 to (concat peek-itm itm)
-                                 itm))
-                 stacks)))
+  (let [stacks (vec stacks)
+        peek-itm (take cnt (stacks from))]
+    (-> stacks
+        (update from #(nthnext % cnt))
+        (update to #(concat peek-itm %)))))
 
 (defn move-single [stacks [cnt, from, to]]
   (loop [i cnt, stacks stacks]
