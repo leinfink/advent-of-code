@@ -1,6 +1,6 @@
 (ns aoc22.day5
   (:require
-   [aoc22.util :refer [for-> str-replace->]]
+   [aoc22.util :refer [str-replace->]]
    [clojure.string :as str]))
 
 (defn parse-rows [s]
