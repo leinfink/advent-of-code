@@ -23,15 +23,12 @@
           tail-hist (conj tail-hist (last knots))]
       (recur [head knots tail-hist] [dir (dec len)]))))
 
-(defn solve
-  ([s]
-   (solve s 1))
-  ([s n]
-   (let [[_ _ tail-hist] (reduce move
-                                 [[0 0] (repeat n [0 0]) [[0 0]]]
-                                 (parse s))]
-     (count (distinct tail-hist)))))
+(defn solve [s n]
+  (let [[_ _ tail-hist] (reduce move
+                                [[0 0] (repeat n [0 0]) [[0 0]]]
+                                (parse s))]
+     (count (distinct tail-hist))))
 
-(defn part1 [s] (solve s))
+(defn part1 [s] (solve s 1))
 
 (defn part2 [s] (solve s 9))
