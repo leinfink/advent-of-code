@@ -22,13 +22,25 @@
           new-ts (conj ts (catch-up new-h (peek ts)))]
       (recur [new-h, new-ts] [dir, (dec len)]))))
 
-(defn solve [s]
+(defn move2 [[h ks ts][dir len]]
+  (if (zero? len)
+    [h ks ts]
+    (let [new-h (mapv + (dirs dir) h)
+          new-ks (rest (reductions #(catch-up %1 %2) new-h ks))
+          new-ts (conj ts (catch-up (last new-ks) (peek ts)))]
+      (recur [new-h new-ks new-ts] [dir, (dec len)]))))
+
+(defn solve1 [s]
   (let [[_ ts] (reduce move [[0 0] '([0 0])] (parse s))]
     (count (distinct ts))))
 
-(defn part1 [s] (solve s))
+(defn solve2 [s]
+  (let [[_ _ ts] (reduce move2 [[0 0] (repeat 8 [0 0]) '([0 0])] (parse s))]
+    (count (distinct ts))))
 
-(defn part2 [_] 0)
+(defn part1 [s] (solve1 s))
+
+(defn part2 [s] (solve2 s))
 
 
 
