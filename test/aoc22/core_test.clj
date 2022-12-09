@@ -38,9 +38,12 @@
            (test-part ~ns puzzle# 1)
            (test-part ~ns puzzle# 2))))))
 
-(defmacro generate-daytests [max-day]
+(defmacro generate-daytests
+  ([max-day] `(generate-daytests 1 ~max-day))
+  ([min-day max-day]
   `(do
-     ~@(for [day (range 1 (inc max-day))]
-         `(def-daytest ~day))))
+     ~@(for [day (range min-day (inc max-day))]
+         `(def-daytest ~day)))))
 
 (generate-daytests 5)
+(generate-daytests 9 9)
