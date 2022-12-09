@@ -1,6 +1,6 @@
 (ns aoc22.day5
   (:require
-   [aoc22.util :refer [str-replace->]]
+   [aoc22.util :refer [for-> str-replace->]]
    [clojure.string :as str]))
 
 (defn parse-rows [s]
@@ -14,23 +14,21 @@
           (reverse (parse-rows s)))) ; But starting stacks need to be flipped.
 
 (defn parse-moves [s]
-  (for [line (str/split-lines s)]
-    (map #(Integer/parseInt %)
-         (-> (str-replace-> line, #"move " "", #" from " " ", #" to " " ")
-             (str/split #" ")))))
+  (for-> s, str/split-lines
+         (-> (str-replace-> #"move " "", #" from " " ", #" to " " ")
+             (str/split #" "))
+         Integer/parseInt))
 
-(defn move-combined [stacks [cnt, from, to]]
-  (let [stacks (vec stacks)
-        peek-itm (take cnt (stacks from))]
+(defn move-multi [stacks [cnt, from, to]]
+  (let [stacks (vec stacks), peek-itm (take cnt (stacks from))]
     (-> stacks
         (update from #(nthnext % cnt))
         (update to #(concat peek-itm %)))))
 
 (defn move-single [stacks [cnt, from, to]]
   (loop [i cnt, stacks stacks]
-    (if (zero? i)
-      stacks
-      (recur (dec i) (move-combined stacks [1, from, to])))))
+    (if (zero? i) stacks
+        (recur (dec i) (move-multi stacks [1, from, to])))))
 
 (defn make-moves [starting-stacks moves mv-fn]
   (reduce (fn [stk [cnt, from, to]] (mv-fn stk [cnt, (dec from) (dec to)]))
@@ -45,4 +43,4 @@
 
 (defn part1 [input] (solve input :move-fn move-single))
 
-(defn part2 [input] (solve input :move-fn move-combined))
+(defn part2 [input] (solve input :move-fn move-multi))
