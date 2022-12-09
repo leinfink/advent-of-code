@@ -27,8 +27,9 @@
 
 (defn move-single [stacks [cnt, from, to]]
   (loop [i cnt, stacks stacks]
-    (if (zero? i) stacks
-        (recur (dec i) (move-multi stacks [1, from, to])))))
+    (if (zero? i)
+      stacks
+      (recur (dec i) (move-multi stacks [1, from, to])))))
 
 (defn make-moves [starting-stacks moves mv-fn]
   (reduce (fn [stk [cnt, from, to]] (mv-fn stk [cnt, (dec from) (dec to)]))
