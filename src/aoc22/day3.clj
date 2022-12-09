@@ -4,8 +4,7 @@
    [clojure.string :as str]))
 
 (defn read-rucksacks [input]
-  (map #(split-at (/ (count %) 2) %)
-       (str/split-lines input)))
+  (map #(split-at (/ (count %) 2) %) (str/split-lines input)))
 
 (defn find-duplicate [[comp1, comp2]]
   (first (set/intersection (set comp1)
@@ -13,7 +12,8 @@
 
 (defn priority [item]
   (- (int item)
-     (if (Character/isUpperCase item) (- 64 26) 96)))
+     (if (Character/isUpperCase item)
+       (- 64 26) 96)))
 
 (defn badges [rucksacks]
   (for [group (partition 3 rucksacks)]

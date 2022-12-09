@@ -6,8 +6,8 @@
 (defn read-pairs [input]
   (for-> input
          str/split-lines
-         (#(str/split % #","))
-         (#(str/split % #"-"))
+         (str/split #",")
+         (str/split #"-")
          Integer/parseInt))
 
 (defn containments [[[a1, a2], [b1, b2]]]

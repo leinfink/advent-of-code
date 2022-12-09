@@ -5,7 +5,7 @@
 
 (defn parse [input]
   (for-> input
-         (#(str/split % #"\n\n"))
+         (str/split #"\n\n")
          str/split-lines
          Integer/parseInt))
 
