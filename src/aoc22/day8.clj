@@ -18,27 +18,18 @@
         (sightlines grid me)))
 
 (defn scenic-score [grid [x, y :as me]]
- (reduce *
-          (map (fn [line]
-                 (let [[sight, nonsight] (split-with
-                                          #(< % (height grid me))
-                                          line)]
-                   (+ (if (seq nonsight) 1 0)
-                       (count sight))))
-                (sightlines grid me))))
+  (->> (sightlines grid me)
+       (map (fn [line]
+              (let [[vis nvis] (split-with #(< % (height grid me)) line)]
+                (+ (count vis) (if (seq nvis) 1 0)))))
+       (reduce *)))
+
+(defn treemap [mapfn grid]
+  (for [x (range (count grid)), y (range (count (first grid)))]
+    (mapfn grid [x, y])))
 
 (defn part1 [s]
-  (let [grid (parse s)]
-    (->> (for [x (range (count grid))
-              y (range (count (first grid)))]
-           (visible? grid [x, y]))
-         (filter some?)
-         count)))
+  (count (filter some? (treemap visible? (parse s)))))
 
 (defn part2 [s]
-  (let [grid (parse s)]
-    (->> (for [x (range (count grid))
-               y (range (count (first grid)))]
-           (scenic-score grid [x, y]))
-         (sort >)
-         first)))
+  (first (sort > (treemap scenic-score (parse s)))))
