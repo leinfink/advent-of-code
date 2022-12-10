@@ -7,7 +7,7 @@
   (slurp (str "inputs/aoc22/day" day "." (name type))))
 
 (defn- parse-answer [input]
-  (str/split-lines input))
+  (str/split (str/trim input) #"\n" 2))
 
 (defn read-puzzle
   "Returns a hashmap with the puzzle input and answers for `day`.
@@ -46,4 +46,4 @@
          `(def-daytest ~day)))))
 
 (generate-daytests 6)
-(generate-daytests 9 9)
+(generate-daytests 9 10)
