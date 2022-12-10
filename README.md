@@ -11,7 +11,7 @@ Includes a tiny automated testing tool. Solutions (with namespace `aoc22.dayX`) 
 - [Day 4](src/aoc22/day4.clj)
 - [Day 5](src/aoc22/day5.clj)
 - [Day 6](src/aoc22/day6.clj)
-- Day 7
+- [Day 7](src/aoc22/day7.clj)
 - Day 8
 - [Day 9](src/aoc22/day9.clj)
 - [Day 10](src/aoc22/day10.clj)
