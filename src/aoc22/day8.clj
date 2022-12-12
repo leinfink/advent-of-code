@@ -1,6 +1,5 @@
 (ns aoc22.day8
-  (:require [clojure.string :as str]
-            [clojure.math :as math]))
+  (:require [clojure.string :as str]))
 
 (defn parse [s]
   (mapv #(mapv parse-long (re-seq #"\d" %)) (str/split-lines s)))
@@ -13,11 +12,11 @@
    (reverse (map #(nth % y) (take x grid)))
    (map #(nth % y) (drop (inc x) grid))])
 
-(defn visible? [grid [x, y :as me]]
+(defn visible? [grid me]
   (some (fn [line] (every? #(< % (height grid me)) line))
         (sightlines grid me)))
 
-(defn scenic-score [grid [x, y :as me]]
+(defn scenic-score [grid me]
   (->> (sightlines grid me)
        (map (fn [line]
               (let [[vis nvis] (split-with #(< % (height grid me)) line)]
