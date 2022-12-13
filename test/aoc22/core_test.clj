@@ -46,3 +46,4 @@
          `(def-daytest ~day)))))
 
 (generate-daytests 10)
+(generate-daytests 12 12)
