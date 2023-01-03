@@ -35,18 +35,18 @@
   `(-> ~s ~@(for [[re, repl] (partition 2 res-pairs)]
               `(str/replace ~re ~repl))))
 
-(defn after-first
+(defn after-some
   "Returns the item directly after the first item in coll for which
-  (pred item) returns logical true."
+  (pred item) returns logical true. If there is no such item, returns nil."
   [pred coll]
   (when-let [s (seq coll)]
     (if (pred (first s))
       (fnext s)
       (recur pred (next s)))))
 
-(defn before-first
+(defn before-some
   "Returns the item directly before the first item in coll for which
-  (pred item) returns logical true."
+  (pred item) returns logical true. If there is no such item, returns nil."
   [pred coll]
   (loop [prev nil, coll coll]
     (when-let [s (seq coll)]
