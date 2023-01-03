@@ -1,4 +1,4 @@
-(ns aoc22.day6)
+(ns aoc22.day06)
 
 (defn solve [n s]
   (+ n (count (take-while #(> n (count (distinct %)))

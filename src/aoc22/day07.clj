@@ -1,4 +1,4 @@
-(ns aoc22.day7
+(ns aoc22.day07
   (:require [clojure.string :as str]))
 
 (defn parse [s]

@@ -30,7 +30,7 @@
   The tested functions have to be called `part1` and `part2`
   and be within a `day`-specific namespace."
   [day]
-  (let [ns (str "aoc22.day" day)]
+  (let [ns (str "aoc22.day" (format "%02d" day))]
     `(do
        (require '~(symbol ns))
        (deftest ~(sym-concat ns "-test")

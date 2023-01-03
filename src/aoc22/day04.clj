@@ -1,4 +1,4 @@
-(ns aoc22.day4
+(ns aoc22.day04
   (:require
    [aoc22.util :refer [for->]]
    [clojure.string :as str]))
