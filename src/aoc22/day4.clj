@@ -8,7 +8,7 @@
          str/split-lines
          (str/split #",")
          (str/split #"-")
-         Integer/parseInt))
+         parse-long))
 
 (defn containments [[[a1, a2], [b1, b2]]]
   (or (<= a1 b1 b2 a2)

@@ -36,8 +36,8 @@
               `(str/replace ~re ~repl))))
 
 (defn after-some
-  "Return the item directly after the first item in coll for which
-  (pred item) returns logical true. If there is no such item, return nil."
+  "Returns the item directly after the first item in coll for which
+  (pred item) returns logical true. If there is no such item, returns nil."
   [pred coll]
   (when-let [s (seq coll)]
     (if (pred (first s))
@@ -45,8 +45,8 @@
       (recur pred (next s)))))
 
 (defn before-some
-  "Return the item directly before the first item in coll for which
-  (pred item) returns logical true. If there is no such item, return nil."
+  "Returns the item directly before the first item in coll for which
+  (pred item) returns logical true. If there is no such item, returns nil."
   [pred coll]
   (loop [prev nil, coll coll]
     (when-let [s (seq coll)]
