@@ -1,16 +1,16 @@
 (ns aoc22.day2
   (:require
-   [aoc22.util :refer [after-first before-first]]
+   [aoc22.util :refer [after-some before-some]]
    [clojure.string :as str]))
 
 ;; Infinite lazy-seq of the shapes in ascending order.
 (defn ranking [] (cycle [:rock :paper :scissors]))
 
-(defn superior [x] (after-first #{x} (ranking)))
+(defn superior [x] (after-some #{x} (ranking)))
 
 (defn inferior [x]
-  (or (before-first #{x} (ranking))
-      (before-first #{x} (rest (ranking))))) ; Get the first shape's inferior.
+  (or (before-some #{x} (ranking))
+      (before-some #{x} (rest (ranking))))) ; Get the first shape's inferior.
 
 (defn outcome [[x, y]]
   (condp = x
