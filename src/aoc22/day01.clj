@@ -1,6 +1,5 @@
-(ns aoc22.day1
-  (:require [clojure.string :as str])
-  (:import java.util.concurrent.PriorityBlockingQueue))
+(ns aoc22.day01
+  (:require [clojure.string :as str]))
 
 (defn parse [input]
   (->> (str/split-lines input)
@@ -8,15 +7,16 @@
        (partition-by nil?)
        (take-nth 2)))
 
- (defn hsort [s]
-   (let [heap (PriorityBlockingQueue. s)]
-     (repeatedly (count s) #(- (.take heap)))))
+(defn highest-n [n coll]
+  (reduce (fn [acc val] (if (> val (first acc))
+                          (rest (sort (conj acc val)))
+                          acc))
+          (repeat n 0)
+          coll))
 
-(defn sorted-calories [elves]
-  (hsort (map #(int (- (reduce + %))) elves))) ; negate for natural ordering
+(defn solve [n elves]
+  (reduce + (highest-n n (map #(reduce + %) elves))))
 
-(defn part1 [input]
-  (first (sorted-calories (parse input))))
+(defn part1 [input] (solve 1 (parse input)))
 
-(defn part2 [input]
-  (reduce + (take 3 (sorted-calories (parse input)))))
+(defn part2 [input] (solve 3 (parse input)))
