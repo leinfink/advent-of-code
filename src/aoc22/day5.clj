@@ -17,7 +17,7 @@
   (for-> s, str/split-lines
          (-> (str-replace-> #"move " "", #" from " " ", #" to " " ")
              (str/split #" "))
-         Integer/parseInt))
+         parse-long))
 
 (defn move-multi [stacks [cnt, from, to]]
   (let [stacks (vec stacks), peek-itm (take cnt (stacks from))]
