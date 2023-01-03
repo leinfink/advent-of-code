@@ -8,10 +8,9 @@
        (take-nth 2)))
 
 (defn highest [n coll]
-  (reduce (fn [acc val]
-            (if (> val (first acc))
-              (rest (sort (conj acc val)))
-              acc))
+  (reduce (fn [acc val] (if (> val (first acc))
+                          (rest (sort (conj acc val)))
+                          acc))
           (repeat n 0)
           coll))
 
