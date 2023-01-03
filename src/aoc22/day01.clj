@@ -7,16 +7,16 @@
        (partition-by nil?)
        (take-nth 2)))
 
-(defn highest-n [n coll]
-  (reduce (fn [acc val] (if (> val (first acc))
-                          (rest (sort (conj acc val)))
-                          acc))
+(defn highest [n coll]
+  (reduce (fn [acc val]
+            (if (> val (first acc))
+              (rest (sort (conj acc val)))
+              acc))
           (repeat n 0)
           coll))
 
-(defn solve [n elves]
-  (reduce + (highest-n n (map #(reduce + %) elves))))
+(defn solve [n elves] (highest n (map #(reduce + %) elves)))
 
-(defn part1 [input] (solve 1 (parse input)))
+(defn part1 [input] (first (solve 1 (parse input))))
 
-(defn part2 [input] (solve 3 (parse input)))
+(defn part2 [input] (reduce + (solve 3 (parse input))))
