@@ -51,7 +51,8 @@
       (list (first forms) x))
     x))
 
-(defmacro str-replace-> [s & res-pairs]
+(defmacro str-replace->
   "Threads s through subsequent clojure.string/replace calls"
+  [s & res-pairs]
   `(-> ~s ~@(for [[re, repl] (partition 2 res-pairs)]
               `(str/replace ~re ~repl))))
