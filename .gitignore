@@ -2,3 +2,5 @@
 /.cpcache/
 /inputs
 *.fasl
+/src/aoc22/day01
+/src/aoc22/day01-no-opt
