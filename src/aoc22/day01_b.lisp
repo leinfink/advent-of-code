@@ -1,27 +1,15 @@
 (require :asdf)
 
-(declaim (optimize (speed 3) (safety 0)))
-
-(declaim (inline put-sorted))
 (defun put-sorted (itm coll)
-  (let ((lowest (car coll)))
-    (declare (type fixnum itm lowest))
-    (if (> itm lowest)
-        (cdr (coerce (sort (coerce (cons itm coll) '(vector fixnum)) #'<)
-                     'list))
-        coll)))
+  (if (> itm (car coll))
+      (cdr (sort (cons itm coll) #'<))
+      coll))
 
-(declaim (inline update-cur-cals))
 (defun update-cur-cals (cur-cals line)
-  (declare (type string line))
   (if (uiop:emptyp line)
       0
-      (let ((added (parse-integer line)))
-        (declare (type fixnum cur-cals added))
-        (the fixnum
-             (+ cur-cals added)))))
+      (+ cur-cals (parse-integer line))))
 
-(declaim (inline update-max-cals))
 (defun update-max-cals (max-cals cur-cals line)
   (if (uiop:emptyp line)
       (put-sorted cur-cals max-cals)
