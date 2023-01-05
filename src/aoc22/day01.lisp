@@ -23,10 +23,10 @@
           :initial-value (make-list n :initial-element 0)))
 
 (defun solve (n elves)
-  (highest n (mapcar (lambda (x) (apply #'+ x)) elves)))
+  (highest n (mapcar (lambda (x) (reduce #'+ x)) elves)))
 
 (defun part1 (input)
   (car (solve 1 (parse input))))
 
 (defun part2 (input)
-  (apply #'+ (solve 3 (parse input))))
+  (reduce #'+ (solve 3 (parse input))))
