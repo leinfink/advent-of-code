@@ -1,8 +1,6 @@
 (ns aoc23.day01
   (:require [clojure.string :as str]))
 
-(defn parse [input] (str/split-lines input))
-
 (defn digits [line]
   (->> (map #(parse-long (str %)) line)
        (remove nil?)))
@@ -14,7 +12,7 @@
        parse-long))
 
 (defn solve [input]
-  (->> (parse input)
+  (->> (str/split-lines input))
        (map compute-line)
        (reduce +)))
 
