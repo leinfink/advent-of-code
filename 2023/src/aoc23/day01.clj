@@ -1,28 +1,34 @@
 (ns aoc23.day01
   (:require [clojure.string :as str]))
 
-(defn parse [input]
-  (str/split-lines input))
+(defn parse [input] (str/split-lines input))
 
-(defn get-digits [line]
-  (remove nil? (map #(parse-long (str %)) line)))
+(defn digits [line]
+  (->> (map #(parse-long (str %)) line)
+       (remove nil?)))
 
-(defn find-first-n-digits [n line]
-  (take n (get-digits line)))
-
-(defn find-last-n-digits [n line]
-  (take-last n (get-digits line)))
-
-(defn result-of-line [line]
-  (->> (concat (find-first-n-digits 1 line)
-               (find-last-n-digits 1 line))
+(defn compute-line [line]
+  (->> (digits line)
+       ((fn [x] [(first x) (last x)]))
        str/join
        parse-long))
 
-  (defn result-of-results [line-results]
-  (reduce + line-results))
-
 (defn solve [input]
   (->> (parse input)
-       (map #(result-of-line %))
-       result-of-results))
+       (map compute-line)
+       (reduce +)))
+
+(defn part1 [input] (solve input))
+
+(defn part2 [input]
+  (let [replacer {"one" "1"
+                  "two" "2"
+                  "three" "3"
+                  "four" "4" 
+                  "five" "5"
+                  "six" "6"
+                  "seven" "7"
+                  "eight" "8"
+                  "nine" "9"}
+        regex (re-pattern (str/join "|" (keys replacer)))]
+    (solve (str/replace input regex replacer))))
