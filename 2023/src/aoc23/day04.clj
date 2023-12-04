@@ -14,15 +14,15 @@
 (defn calc-line [line]
   (int (reduce (fn [v _] (* v 2)) 1/2 (search-line line))))
 
-(defn count-line [line]
-  {:id (:id line)
-   :count (count (search-line line))})
-
 (defn part1 [input]
   (->> (str/split-lines input)
        (map prepare-line)
        (map calc-line)
        (reduce +)))
+
+(defn count-line [line]
+  {:id (:id line)
+   :count (count (search-line line))})
 
 (defn add-cards [card cards]
   (apply conj cards
