@@ -8,18 +8,15 @@
      :winners (map parse-long (str/split winners #" +"))
      :mine (map parse-long (str/split mine #" +"))}))
 
+(defn search-line [line]
+  (filter #(contains? (set (:winners line)) %) (:mine line)))
+
 (defn calc-line [line]
-  (->> (:mine line)
-       (filter #(contains? (set (:winners line)) %))
-       (reduce (fn [v _] (* v 2)) 1/2)
-       int))
+  (int (reduce (fn [v _] (* v 2)) 1/2 (search-line line))))
 
 (defn count-line [line]
   {:id (:id line)
-   :count
-   (->> (:mine line)
-        (filter #(contains? (set (:winners line)) %))
-        count)})
+   :count (count (search-line line))})
 
 (defn part1 [input]
   (->> (str/split-lines input)
@@ -29,11 +26,9 @@
 
 (defn add-cards [card cards]
   (apply conj cards
-        (for [i (range (:count card))]
-          (some (fn [x] (when (= (:id x)
-                                 (+ (:id card) (inc i)))
-                          x))
-                cards))))
+         (for [i (range (:count card))]
+           (some #(when (= (:id %) (+ (:id card) (inc i))) %)
+                 cards))))
 
 (defn get-cards [coll cards]
   (if (empty? cards) coll
@@ -47,4 +42,3 @@
        (map count-line)
        (get-cards '())
        count))
-
