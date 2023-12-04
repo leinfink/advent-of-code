@@ -52,7 +52,6 @@
                           (find-gear-nums-in-line grid line))
                   (filter #(neighbor? line pos (dec line) (:start %) (:end %))
                           (find-gear-nums-in-line grid (inc line))))]
-;;    (count neigbors)))
     (if (= 2 (count neigbors))
       (reduce * (map parse-long (map :group neigbors)))
       0)))
@@ -63,10 +62,6 @@
 (defn find-all-gears [grid]
   (map #(find-gears-in-line grid %) (range (count grid))))
         
-
-(defn find-all-gear-nums [grid]
-  (map #(find-gear-nums-in-line grid %) (range (count grid))))
-
 (defn part1 [input]
   (->> (grid input)
        find-all-hits
@@ -74,13 +69,11 @@
        (map parse-long)
        (reduce +)))
 
-
 (defn part2 [input]
-  (let [grid (grid input)
-        gears (find-all-gears grid)]
-        (reduce + (flatten
-    (map-indexed (fn [i x]
-                              (map #(multiply-if-two-neighbors
-                                     grid i (:start %)) x)) gears)))
-))
-
+  (let [grid (grid input)]
+    (->> (find-all-gears grid)
+         (map-indexed
+          (fn [i x]
+            (map #(multiply-if-two-neighbors grid i (:start %)) x)))
+         flatten
+         (reduce +))))
