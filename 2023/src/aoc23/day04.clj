@@ -9,16 +9,17 @@
      :mine (map parse-long (str/split mine #" +"))}))
 
 (defn calc-line [line]
-  (->> (set (:mine line))
-       (clojure.set/intersection (set (:winners line)))
-;;       (filter #(contains? (set (:winners line)) %))
+  (->> (:mine line)
+       (filter #(contains? (set (:winners line)) %))
        (reduce (fn [v _] (* v 2)) 1/2)
        int))
 
 (defn count-line [line]
-  {:id (:id line) :count (->> (set (:mine line))
-                              (clojure.set/intersection (set (:winners line)))
-                              count)})
+  {:id (:id line)
+   :count
+   (->> (:mine line)
+        (filter #(contains? (set (:winners line)) %))
+        count)})
 
 (defn part1 [input]
   (->> (str/split-lines input)
@@ -26,21 +27,24 @@
        (map calc-line)
        (reduce +)))
 
-(defn add-cards [cards card]
+(defn add-cards [card cards]
   (apply conj cards
         (for [i (range (:count card))]
-          (some (fn [x] (when (= (:id x) (+ (:id card) (inc i))) x)) cards))))
+          (some (fn [x] (when (= (:id x)
+                                 (+ (:id card) (inc i)))
+                          x))
+                cards))))
 
-(defn get-cards [cards coll]
+(defn get-cards [coll cards]
   (if (empty? cards) coll
-      (recur (add-cards (rest cards) (first cards))
-             (conj coll (first cards)))))
-    
+      (recur 
+       (conj coll (first cards))
+       (add-cards (first cards) (rest cards)))))
 
-(defn cards [input]
-  (count 
-  (get-cards  (->> (str/split-lines input)
-                   (map prepare-line)
-                   (map count-line))
-              '())))
+(defn part2 [input]
+  (->> (str/split-lines input)
+       (map prepare-line)
+       (map count-line)
+       (get-cards '())
+       count))
 
