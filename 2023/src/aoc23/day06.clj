@@ -14,6 +14,16 @@
                        (map parse-long))]
     (partition 2 (interleave times distances))))
 
+(defn parse2 [input]
+  (let [[times distances] (str/split-lines input)
+        times (->> (rest (str/split times #" +"))
+                   (apply str)
+                   parse-long)
+        distances (->> (rest (str/split distances #" +"))
+                       (apply str)
+                       parse-long)]
+    (list [times distances])))
+
 (defn result [hold [length _]]
   (* (- length hold) hold))
 
@@ -30,3 +40,13 @@
        (reduce *)))
 
 (part1 input)
+(parse2 input)
+
+(defn part2 [input]
+  (->> (parse2 input)
+       (map winning-options)
+       (map count)
+       first))
+
+(part2 input)
+(part2 input)
