@@ -1,28 +1,25 @@
-(comment
-  (def input (slurp "inputs/input6.txt"))
-  (def input (slurp "inputs/example6.txt"))
-  )
-
 (ns aoc23.day06
   (:require [clojure.string :as str]))
 
-(defn parse [input]
-  (let [[times distances] (str/split-lines input)
-        times (->> (rest (str/split times #" +"))
-                   (map parse-long))
-        distances (->> (rest (str/split distances #" +"))
-                       (map parse-long))]
-    (partition 2 (interleave times distances))))
+(defn parse-line-part1 [line]
+  (->> (rest (str/split line #" +"))
+       (map parse-long)))
 
-(defn parse2 [input]
-  (let [[times distances] (str/split-lines input)
-        times (->> (rest (str/split times #" +"))
-                   (apply str)
-                   parse-long)
-        distances (->> (rest (str/split distances #" +"))
-                       (apply str)
-                       parse-long)]
-    (list [times distances])))
+(defn parse-part1 [input]
+  (->> (str/split-lines input)
+       (map parse-line-part1)
+       (apply interleave)
+       (partition 2)))
+
+(defn parse-line-part2 [line]
+  (->> (rest (str/split line #" +"))
+       (apply str)
+       parse-long))
+
+(defn parse-part2 [input]
+  (->> (str/split-lines input)
+       (map parse-line-part2)
+       list))
 
 (defn result [hold [length _]]
   (* (- length hold) hold))
@@ -34,14 +31,13 @@
   (filter #(breaks-record % race) (range length)))
 
 (defn part1 [input]
-  (->> (parse input)
+  (->> (parse-part1 input)
        (map winning-options)
        (map count)
        (reduce *)))
 
 (defn part2 [input]
-  (->> (parse2 input)
+  (->> (parse-part2 input)
        (map winning-options)
        (map count)
        first))
-
