@@ -39,14 +39,9 @@
        (map count)
        (reduce *)))
 
-(part1 input)
-(parse2 input)
-
 (defn part2 [input]
   (->> (parse2 input)
        (map winning-options)
        (map count)
        first))
 
-(part2 input)
-(part2 input)
