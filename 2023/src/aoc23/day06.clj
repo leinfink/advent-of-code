@@ -2,24 +2,20 @@
   (:require [clojure.string :as str]))
 
 (defn parse-line-part1 [line]
-  (->> (rest (str/split line #" +"))
-       (map parse-long)))
+  (map parse-long (rest (str/split line #" +"))))
 
 (defn parse-part1 [input]
-  (->> (str/split-lines input)
-       (map parse-line-part1)
-       (apply interleave)
-       (partition 2)))
+  (let [[times distances] (str/split-lines input)]
+    (partition 2 (interleave (parse-line-part1 times)
+                             (parse-line-part1 distances)))))
 
 (defn parse-line-part2 [line]
-  (->> (rest (str/split line #" +"))
-       (apply str)
-       parse-long))
+  (parse-long (apply str (rest (str/split line #" +")))))
 
 (defn parse-part2 [input]
-  (->> (str/split-lines input)
-       (map parse-line-part2)
-       list))
+  (let [[times distances] (str/split-lines input)]
+    (list [(parse-line-part2 times)
+           (parse-line-part2 distances)])))
 
 (defn result [hold [length _]]
   (* (- length hold) hold))
@@ -41,3 +37,4 @@
        (map winning-options)
        (map count)
        first))
+
