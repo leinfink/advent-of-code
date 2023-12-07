@@ -45,8 +45,6 @@
        (map-indexed (fn [rank item] (* (inc rank) (:bid item))))
        (reduce +)))
 
-(def cards2 (reverse "AKQT98765432J"))
-
 (defn hand-type2 [hand]
   (let [joker-count (or ((frequencies hand) \J) 0)
         v (sort > (vals (frequencies (str/replace hand "J" ""))))
@@ -55,5 +53,5 @@
 
 (defn part2 [input]
   (binding [hand-type hand-type2
-            cards cards2]
+            cards (reverse "AKQT98765432J")]
     (part1 input)))
