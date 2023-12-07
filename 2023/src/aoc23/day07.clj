@@ -11,8 +11,8 @@
        (map #(str/split % #" +"))
        (map (fn [x] {:hand (x 0) :bid (parse-long (x 1))}))))
 
-(def cards "AKQJT98765432")
-(def types [:five :four :full-house :three :two-pair :one-pair :high-card])
+(def cards (reverse "AKQJT98765432"))
+(def types (reverse [:five :four :full-house :three :two-pair :one-pair :high-card]))
 
 (defn compare-type [type-a type-b]
   (compare (.indexOf types type-a) (.indexOf types type-b)))
