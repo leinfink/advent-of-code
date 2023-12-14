@@ -1,9 +1,3 @@
-(comment
-  (def input (slurp "inputs/input9.txt"))
-  (def input (slurp "inputs/example9.txt"))
-  
-  )
-
 (ns aoc23.day09
   (:require [clojure.string :as str]))
 
@@ -27,15 +21,23 @@
 (defn predict [colls]
   (reduce (fn [v i] (+ v (peek i))) 0 colls))
 
+(defn retrodict [colls]
+  (reduce (fn [v i] (- (first i) v)) 0 colls))
+
 (defn part1 [input]
   (->> (parse input)
        (map analyse)
        (map predict)
+       (reduce +)
        ))
 
-(part1 input)
 
-
+(defn part2 [input]
+  (->> (parse input)
+       (map analyse)
+       (map retrodict)
+       (reduce +)
+       ))
   
 
 
