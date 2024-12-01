@@ -18,11 +18,9 @@ void sort(int *list) {
       }
     }
   } while (sorted == false);
-
-  return;
 }
 
-int main() {
+int main(void) {
   FILE *fp;
   int list1[LINES];
   int list2[LINES];
@@ -70,4 +68,6 @@ int main() {
   }
 
   printf("%d\n", res);
+
+  return 0;
 }
