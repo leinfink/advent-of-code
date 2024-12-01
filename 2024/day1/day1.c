@@ -1,61 +1,73 @@
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #define LINES 1000
 
-void sort(int* list){
+void sort(int *list) {
   bool sorted;
   int i, j;
+
   do {
     sorted = true;
-    for (i = 0; i < LINES-1; ++i) {
-      if (list[i] > list[i+1]) {
+    for (i = 0; i < LINES - 1; ++i) {
+      if (list[i] > list[i + 1]) {
         sorted = false;
         j = list[i];
-        list[i] = list[i+1];
-        list[i+1] = j;
+        list[i] = list[i + 1];
+        list[i + 1] = j;
       }
     }
   } while (sorted == false);
+
   return;
 }
 
-int main () {
+int main() {
   FILE *fp;
   int list1[LINES];
   int list2[LINES];
-  int i, j, k;
-  int res_1 = 0;
-  int res_2 = 0;
+  int i, j;
+  int res = 0;
 
   fp = fopen("input.txt", "r");
 
-  for (i = 0; i<LINES; ++i) {
+  for (i = 0; i < LINES; ++i) {
     fscanf(fp, "%d %d\n", &list1[i], &list2[i]);
   }
 
   fclose(fp);
 
+  /* part 1 */
+
   sort(list1);
   sort(list2);
 
-  for (i = 0; i<LINES; ++i) {
-    j = list1[i] - list2[i];
-    if (j < 0) {j = -j;}
-    res_1 += j;
+  int dt = 0;
+  
+  for (i = 0; i < LINES; ++i) {
+    dt = list1[i] - list2[i];
+    if (dt < 0) {
+      dt = -dt;
+    }
+    res += dt;
   }
 
-  printf("%d\n", res_1);
+  printf("%d\n", res);
 
-  for (i = 0; i<LINES; ++i) {
-    k = 0;
-    for (j = 0; j<LINES; ++j) {
+  /* part 2 */
+
+  res = 0;
+  int count = 0;
+
+  for (i = 0; i < LINES; ++i) {
+    count = 0;
+    for (j = 0; j < LINES; ++j) {
       if (list2[j] == list1[i]) {
-        ++k;
+        ++count;
       }
     }
-    res_2 += k*list1[i];
+    res += count * list1[i];
   }
 
-  printf("%d\n", res_2);
+  printf("%d\n", res);
 }
