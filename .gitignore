@@ -6,3 +6,9 @@
 /src/aoc22/day01-no-opt
 .cpcache
 .nrepl-port
+<<<<<<< Updated upstream
+=======
+.out
+*.out
+>>>>>>> Stashed changes
+input.txt
