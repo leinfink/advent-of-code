@@ -6,8 +6,6 @@
 #define FILENAME "input.txt"
 #define MAXLINE 1024 * 10
 
-int countString(const char *, const char *, int max);
-
 int main(void) {
   FILE *fp;
   char line[MAXLINE];
@@ -98,16 +96,4 @@ int main(void) {
   regfree(&regex);
   fclose(fp);
   printf("Result part 2: %d\n", result);
-}
-int countString(const char *haystack, const char *needle, int max) {
-  int count = 0;
-  char shortened[MAXLINE];
-
-  strncpy(shortened, haystack, max);
-  char *tmp = shortened;
-  while (tmp = strstr(tmp, needle)) {
-    count++;
-    tmp++;
-  }
-  return count;
 }
