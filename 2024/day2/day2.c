@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define FILENAME "input.txt"
-#define LINEMAX 10124
+#define LINEMAX 1024
 
 int check_record(char *, int *);
 
