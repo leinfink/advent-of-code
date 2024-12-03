@@ -58,8 +58,8 @@ int main(void) {
       pos = 0;
       while (regexec(&regex, line + pos, match_groups, pmatch, 0) == 0) {
         char shortened[MAXLINE];
-        strncpy(shortened, line, pos+pmatch[2].rm_so);
-        shortened[pos+pmatch[2].rm_so] = '\0';
+        strncpy(shortened, line, pos + pmatch[2].rm_so);
+        shortened[pos + pmatch[2].rm_so] = '\0';
         char *tmp = shortened;
         char *last_do = tmp;
         int count = 0;
