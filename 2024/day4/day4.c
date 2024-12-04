@@ -84,8 +84,8 @@ bool find(char *mas, int maslen, Vec point, Vec dir) {
   for (int i = 1; i < maslen; ++i) {
     char c = grid[point.y + dir.y * i][point.x + dir.x * i];
     if (mas[i - 1] != c) {
-      return 0;
+      return false;
     }
   }
-  return 1;
+  return true;
 }
