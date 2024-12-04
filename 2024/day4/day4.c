@@ -4,10 +4,6 @@
 
 #define FILENAME "input.txt"
 #define LENGTH 140
-#define DIR_LEN 8
-
-FILE *fp;
-char grid[LENGTH][LENGTH + 2]; /* +2 because of \n and \0 */
 
 typedef struct Vec {
   int x;
@@ -18,6 +14,9 @@ int count_mas(Vec);
 bool find_xmas(Vec);
 bool find_diag(Vec, Vec);
 bool find(char *, int, Vec, Vec);
+
+FILE *fp;
+char grid[LENGTH][LENGTH + 2]; /* + 2 because of \n and \0 */
 
 int main(void) {
   int i = 0;
@@ -32,18 +31,15 @@ int main(void) {
   }
 
   /* part 1 */
-  Vec point;
   int count = 0;
   for (int i = 0; i < LENGTH; ++i) {
     for (int j = 0; j < LENGTH; ++j) {
-      point.x = i;
-      point.y = j;
+      Vec point = {i, j};
       if (grid[point.y][point.x] == 'X') {
         count += count_mas(point);
       }
     }
   }
-
   printf("Result part 1: %d\n", count);
 
   /* part 2 */
@@ -51,14 +47,12 @@ int main(void) {
   count = 0;
   for (int i = 0; i < LENGTH; ++i) {
     for (int j = 0; j < LENGTH; ++j) {
-      point.x = i;
-      point.y = j;
+      Vec point = {i, j};
       if (grid[point.y][point.x] == 'A') {
         count += find_xmas(point);
       }
     }
   }
-
   printf("Result part 2: %d\n", count);
 
   return EXIT_SUCCESS;
@@ -84,18 +78,8 @@ bool find_xmas(Vec point) {
 
 bool find_diag(Vec p, Vec diag) {
   char c = grid[p.y][p.x];
-  if (c == 'S') {
-    if (!find("AM", 3, p, diag)) {
-      return 0;
-    }
-  } else if (c == 'M') {
-    if (!find("AS", 3, p, diag)) {
-      return 0;
-    }
-  } else {
-    return 0;
-  }
-  return 1;
+  return c == 'S' && find("AM", 3, p, diag) ||
+         c == 'M' && find("AS", 3, p, diag);
 }
 
 bool find(char *mas, int maslen, Vec point, Vec dir) {
