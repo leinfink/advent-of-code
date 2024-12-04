@@ -66,9 +66,9 @@ int solve(bool check_dos) {
           }
           active = count == 0 ? active : (strlen(last_do) < strlen(last_dont));
         }
-        
+
         int matches = regex.re_nsub;
-        
+
         if (active) {
           for (int i = 1; i <= matches; ++i) {
             char *p = line + pos + pmatch[i].rm_so;
@@ -78,7 +78,6 @@ int solve(bool check_dos) {
           for (int i = 0; i < MATCH_GROUPS - 1; ++i) {
             j *= operands[i];
           }
-
           result += j;
         }
         pos += pmatch[matches].rm_eo;
