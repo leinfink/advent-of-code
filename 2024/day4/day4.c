@@ -25,7 +25,6 @@ int main(void) {
     ++i;
   }
   fclose(fp);
-
   if (i != LENGTH) {
     return EXIT_FAILURE;
   }
@@ -54,7 +53,6 @@ int main(void) {
     }
   }
   printf("Result part 2: %d\n", count);
-
   return EXIT_SUCCESS;
 }
 
