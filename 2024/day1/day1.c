@@ -28,20 +28,16 @@ int main(void) {
   int res = 0;
 
   fp = fopen("input.txt", "r");
-
   for (i = 0; i < LINES; ++i) {
     fscanf(fp, "%d %d\n", &list1[i], &list2[i]);
   }
-
   fclose(fp);
 
   /* part 1 */
-
   sort(list1);
   sort(list2);
 
   int dt = 0;
-  
   for (i = 0; i < LINES; ++i) {
     dt = list1[i] - list2[i];
     if (dt < 0) {
@@ -49,14 +45,12 @@ int main(void) {
     }
     res += dt;
   }
-
   printf("%d\n", res);
 
   /* part 2 */
 
   res = 0;
   int count = 0;
-
   for (i = 0; i < LINES; ++i) {
     count = 0;
     for (j = 0; j < LINES; ++j) {
@@ -66,8 +60,6 @@ int main(void) {
     }
     res += count * list1[i];
   }
-
   printf("%d\n", res);
-
   return 0;
 }

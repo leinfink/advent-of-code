@@ -13,26 +13,19 @@ int main(void) {
   int safe_records = 0;
 
   /* part 1 */
-
   fp = fopen(FILENAME, "r");
-
   while (fgets(line, sizeof line, fp) != NULL) {
     safe_records += check_record(line, NULL);
   }
-
   fclose(fp);
-
   printf("Result part 1: %d\n", safe_records);
 
   /* part 2 */
-
   char linecp[LINEMAX], newrec[LINEMAX];
   int numcount, slen, safe, k, m, len;
 
-  safe_records = 0;
-
   fp = fopen(FILENAME, "r");
-
+  safe_records = 0;
   while (fgets(line, sizeof line, fp) != NULL) {
     strcpy(linecp, line);
     slen = strlen(linecp);
@@ -65,11 +58,8 @@ int main(void) {
     }
     safe_records += safe;
   }
-
   printf("Result part 2: %d\n", safe_records);
-
   fclose(fp);
-
   return EXIT_SUCCESS;
 }
 
@@ -80,14 +70,12 @@ int check_record(char *record, int *numcount) {
 
   last = atoi(strtok(record, " "));
   num = strtok(NULL, " ");
-
   if (numcount != NULL) {
     *numcount = 1;
   }
-
+  
   is_safe = 1;
   dir = 0;
-
   while (num != NULL) {
     if (numcount != NULL) {
       ++*numcount;
@@ -104,6 +92,5 @@ int check_record(char *record, int *numcount) {
     last = cur;
     num = strtok(NULL, " ");
   }
-
   return is_safe;
 }

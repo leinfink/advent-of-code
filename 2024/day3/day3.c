@@ -17,21 +17,18 @@ int operands[MATCH_GROUPS - 1];
 
 int main(void) {
   int result;
-
   if (regcomp(&regex, "mul\\(([1-9][0-9]*),([1-9][0-9]*)\\)", REG_EXTENDED)) {
     return EXIT_FAILURE;
   }
 
   fp = fopen(FILENAME, "r");
-
   result = solve(false);
   printf("Result part 1: %d\n", result);
-
+  
   result = solve(true);
   printf("Result part 2: %d\n", result);
-
+  
   fclose(fp);
-
   return EXIT_SUCCESS;
 }
 
@@ -68,7 +65,6 @@ int solve(bool check_dos) {
         }
 
         int matches = regex.re_nsub;
-
         if (active) {
           for (int i = 1; i <= matches; ++i) {
             char *p = line + pos + pmatch[i].rm_so;
