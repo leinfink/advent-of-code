@@ -8,18 +8,16 @@
 
 FILE *fp;
 char grid[LENGTH][LENGTH + 2]; /* +2 because of \n and \0 */
-struct vec {
+
+typedef struct Vec {
   int x;
   int y;
-};
-struct vec point;
-struct vec dir[DIR_LEN] = {{1, 1},  {1, 0},  {-1, 0}, {-1, -1},
-                           {-1, 1}, {1, -1}, {0, 1},  {0, -1}};
-struct vec diags[DIR_LEN] = {{1, 1}, {1, -1}};
+} Vec;
 
-int count_mas(struct vec);
-bool find_xmas(struct vec);
-bool find(char *, int, struct vec, struct vec);
+int count_mas(Vec);
+bool find_xmas(Vec);
+bool find_diag(Vec, Vec);
+bool find(char *, int, Vec, Vec);
 
 int main(void) {
   int i = 0;
@@ -34,7 +32,7 @@ int main(void) {
   }
 
   /* part 1 */
-
+  Vec point;
   int count = 0;
   for (int i = 0; i < LENGTH; ++i) {
     for (int j = 0; j < LENGTH; ++j) {
@@ -66,41 +64,32 @@ int main(void) {
   return EXIT_SUCCESS;
 }
 
-int count_mas(struct vec point) {
+int count_mas(Vec point) {
+  Vec dir[8] = {{1, 0},  {1, 1},  {1, -1}, {0, 1},
+                {0, -1}, {-1, 0}, {-1, 1}, {-1, -1}};
   char mas[4] = "MAS";
   int count = 0;
-  for (int k = 0; k < DIR_LEN; ++k) {
+  for (int k = 0; k < 8; ++k) {
     count += find(mas, 4, point, dir[k]);
   }
   return count;
 }
 
-bool find_xmas(struct vec point) {
-  char c;
-  struct vec p;
-  p.y = point.y - 1;
-  p.x = point.x - 1;
-  c = grid[p.y][p.x];
+bool find_xmas(Vec point) {
+  Vec diags[2] = {{1, 1}, {1, -1}};
+  Vec p1 = {point.x - 1, point.y - 1};
+  Vec p2 = {point.x - 1, point.y + 1};
+  return find_diag(p1, diags[0]) && find_diag(p2, diags[1]);
+}
+
+bool find_diag(Vec p, Vec diag) {
+  char c = grid[p.y][p.x];
   if (c == 'S') {
-    if (!find("AM", 3, p, diags[0])) {
+    if (!find("AM", 3, p, diag)) {
       return 0;
     }
   } else if (c == 'M') {
-    if (!find("AS", 3, p, diags[0])) {
-      return 0;
-    }
-  } else {
-    return 0;
-  }
-  p.y = point.y + 1;
-  p.x = point.x - 1;
-  c = grid[p.y][p.x];
-   if (c == 'S') {
-    if (!find("AM", 3, p, diags[1])) {
-      return 0;
-    }
-  } else if (c == 'M') {
-    if (!find("AS", 3, p, diags[1])) {
+    if (!find("AS", 3, p, diag)) {
       return 0;
     }
   } else {
@@ -109,10 +98,10 @@ bool find_xmas(struct vec point) {
   return 1;
 }
 
-bool find(char *mas, int maslen, struct vec point, struct vec dir) {
+bool find(char *mas, int maslen, Vec point, Vec dir) {
   for (int i = 1; i < maslen; ++i) {
     char c = grid[point.y + dir.y * i][point.x + dir.x * i];
-     if (mas[i - 1] != c) {
+    if (mas[i - 1] != c) {
       return 0;
     }
   }
