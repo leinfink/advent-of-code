@@ -27,29 +27,28 @@ let mid_page u = List.nth u ((List.length u) / 2)
 let valid_mid_page rs u = if valid rs u then Some (mid_page u) else None
 
 let part_1 (rs: rule list) (us: update list) : int =
-  List.filter_map (valid_mid_page rs) us
-  |> List.fold_left (+) 0
-      
+  List.filter_map (valid_mid_page rs) us |> List.fold_left (+) 0
+
+let rhs = List.map (fun (_, r) -> r)
+let not_in_rhs rs x = (not (List.mem x (rhs rs)))
+
+(* Idea: Find the (assumed unique) page that is only on the left side of rules, *)
+(*       store that page and remove its associated rules, repeat.               *)
+let rec construct acc rs = function
+  | _ :: _ as nums ->
+    let n = List.find (not_in_rhs rs) nums in
+    let rs = (List.filter (fun (l, _) -> l <> n) rs) in
+    let nums =  (List.filter ((<>) n) nums) in
+    construct (n :: acc) rs nums
+  | [] -> List.rev acc
+
+let correct rs u : page list = construct [] (List.filter (relevant u) rs) u
+
+let part_2 (rs: rule list) (us: update list)  =
+  List.filter_map (fun u -> if valid rs u then None else Some u) us
+  |> List.map (correct rs) |> List.map mid_page |> List.fold_left (+) 0
+    
 let rs, us = parse "input.txt"
 let _ = part_1 rs us |> string_of_int |> print_endline
+let _ = part_2 rs us |> string_of_int |> print_endline
 
-open Printf
-
-let correct (rs: rule list) (u: update) =
-  let relevant_rs = List.filter (relevant u) rs in
-  let rec construct (order: page list) (rules: rule list) nums = match nums with
-    | [] -> List.rev order
-    | _ :: _ as nums ->
-      let n = List.find (fun x -> (not (List.mem x (List.map (fun (_, r) -> r) rules)))) nums
-      in construct (n :: order) (List.filter (fun (l, _) -> l <> n) rules)
-        (List.filter (fun x -> not (x = n)) nums)
-  in construct [] relevant_rs u
-
-let part_2 rs us =
-  List.filter_map (fun u -> if valid rs u then None else Some u) us
-  |> List.map (correct rs)
-  |> List.map mid_page
-  |> List.fold_left (+) 0
-
-let _ = part_2 rs us
-    
