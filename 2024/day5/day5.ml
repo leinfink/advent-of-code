@@ -8,7 +8,7 @@ let valid rs u = List.filter (relevant u) rs |> List.for_all (satisfied u)
 let mid_page u = List.nth u ((List.length u) / 2)
 let valid_mid_page rs u = if valid rs u then Some (mid_page u) else None
 
-let part_1 (rs: rule list) (us: update list) =
+let part_1 (rs: rule list) (us: update list) : int =
   List.filter_map (valid_mid_page rs) us
   |> List.fold_left (+) 0
 
@@ -23,7 +23,7 @@ let rec parse_updates ch acc =
   | u ->  parse_updates ch ((List.map int_of_string u) :: acc)
   | exception _ -> acc
 
-let parse file =
+let parse file : (rule list * update list) =
   let ch = Scanf.Scanning.open_in file in
   let rules = parse_rules ch [] in
   let updates = parse_updates ch [] in
@@ -31,5 +31,4 @@ let parse file =
   (rules, updates)
       
 let rs, us = parse "input.txt"
-
-let _ = part_1 rs us
+let _ = part_1 rs us |> string_of_int |> print_endline
