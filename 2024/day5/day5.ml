@@ -15,8 +15,8 @@ let rec parse_updates ch acc =
 
 let parse file : (rule list * update list) =
   let ch = Scanf.Scanning.open_in file in
-  let rules = parse_rules ch [] in
-  let updates = parse_updates ch [] in
+  let rules = parse_rules ch [] in                 (* these have to be in order *)
+  let updates = parse_updates ch [] in             (*                           *)
   Scanf.Scanning.close_in ch;
   (rules, updates)
 
@@ -30,15 +30,15 @@ let part_1 (rs: rule list) (us: update list) : int =
   List.filter_map (valid_mid_page rs) us |> List.fold_left (+) 0
 
 let rhs = List.map (fun (_, r) -> r)
-let not_in_rhs rs x = (not (List.mem x (rhs rs)))
+let not_in_rhs rs x = not (List.mem x (rhs rs))
 
 (* Idea: Find the (assumed unique) page that is only on the left side of rules, *)
 (*       store that page and remove its associated rules, repeat.               *)
 let rec construct acc rs = function
   | _ :: _ as nums ->
     let n = List.find (not_in_rhs rs) nums in
-    let rs = (List.filter (fun (l, _) -> l <> n) rs) in
-    let nums =  (List.filter ((<>) n) nums) in
+    let rs = List.filter (fun (l, _) -> l <> n) rs in
+    let nums = List.filter ((<>) n) nums in
     construct (n :: acc) rs nums
   | [] -> List.rev acc
 
