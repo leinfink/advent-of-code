@@ -31,8 +31,7 @@ let read_lines file =
   let contents = In_channel.with_open_bin file In_channel.input_all in
   String.split_on_char '\n' contents
 
-let parse_pos find y (x, char) =
-  if char = find then Some (x, y) else None
+let parse_pos find y (x, char) = if char = find then Some (x, y) else None
 
 let parse_line find y line =
   line |> String.to_seqi |> List.of_seq |>
