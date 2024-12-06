@@ -12,18 +12,13 @@ module PosSet = Set.Make(Position)
 type dir = Up | Down | Left | Right
 
 let turn_right = function
-  | Up -> Right
-  | Down -> Left
-  | Left -> Up
-  | Right -> Down
+  | Up -> Right | Down -> Left | Left -> Up | Right -> Down
 
 let next (x, y) = function
-  | Up -> (x, y-1)
-  | Down -> (x, y+1)
-  | Left -> (x-1, y)
-  | Right -> (x+1, y)
+  | Up -> (x, y-1) | Down -> (x, y+1) | Left -> (x-1, y) | Right -> (x+1, y)
 
-let out_of_bounds (x, y) (len_x, len_y) = x >= len_x || y >= len_y || x < 0 || y < 0
+let out_of_bounds (x, y) (len_x, len_y) =
+  x >= len_x || y >= len_y || x < 0 || y < 0
 
 let rec step obsts max acc ((x, y) as pos) dir =
   let next = next pos dir in
