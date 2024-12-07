@@ -49,15 +49,11 @@ let visited = step obstacles max PosSet.empty start Up
 
 module PositionWithDirection = struct
   type t = int * int * dir
-
   let order dir = match dir with Up -> 1 | Down -> 2 | Left -> 3 | Right -> 4
  
   let compare (x0, y0, dir0) (x1, y1, dir1) =
-    match Stdlib.compare x0 x1 with
-    | 0 -> begin match Stdlib.compare y0 y1 with
-        | 0 ->  Stdlib.compare (order dir0) (order dir1)
-        | c -> c
-      end
+    match Position.compare (x0, y0) (x1, y1) with
+    | 0 -> Stdlib.compare (order dir0) (order dir1)
     | c -> c
 end
 
