@@ -22,12 +22,12 @@ let out_of_bounds (x, y) (len_x, len_y) =
 
 let rec step obsts max acc ((x, y) as pos) dir =
   let next = next pos dir in
-  if out_of_bounds next max then acc else
+  if out_of_bounds next max then (PosSet.add pos acc) else
   if PosSet.mem next obsts
   then step obsts max acc (x, y) (turn_right dir)
-  else step obsts max (PosSet.add (x, y) acc) next dir
+  else step obsts max (PosSet.add pos acc) next dir
 
-let max = (10, 10) (* (130, 130) *)
+let max = (* (10, 10) *) (130, 130)
 
 let read_lines file =
   let contents = In_channel.with_open_bin file In_channel.input_all in
@@ -46,7 +46,6 @@ let obstacles = parse '#'
 let start = PosSet.max_elt (parse '^')
 
 let visited = step obstacles max PosSet.empty start Up
-let _ = (PosSet.cardinal visited) + 1
 
 module PositionWithDirection = struct
   type t = int * int * dir
@@ -66,7 +65,7 @@ module PosDirSet = Set.Make(PositionWithDirection)
 
 let rec step2 obsts max (acc : PosDirSet.t) ((x, y) as pos) dir =
   let next = next pos dir in
-  if PosDirSet.mem (x, y, dir) acc then Some obsts(* acc *) else
+  if PosDirSet.mem (x, y, dir) acc then Some true else
   if out_of_bounds next max then None else
   if PosSet.mem next obsts
   then step2 obsts max acc (x, y) (turn_right dir)
@@ -77,8 +76,7 @@ let try_loops visited =
   List.filter_map (fun (x, y) ->
       let obsts = PosSet.add (x, y) obstacles in
       step2 obsts max PosDirSet.empty start Up)
-  |> List.map (fun x -> PosSet.to_list(PosSet.diff x obstacles))
-(* |> List.length *)
+  |> List.length
 
-let _ = PosSet.to_list visited
-let _ = try_loops visited
+let _ = PosSet.cardinal visited |> string_of_int |> print_endline
+let _ = try_loops visited |> string_of_int |> print_endline
