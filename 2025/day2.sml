@@ -50,3 +50,5 @@ fun parse_input_file path =
         
 val ranges = parse_input_file "input2.txt"
 val part1 = sum_invalids_in_ranges is_invalid_part1 ranges
+fun main () = print ((LargeInt.toString part1) ^ "\n")
+val _ = main()
