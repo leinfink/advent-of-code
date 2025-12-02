@@ -2,6 +2,32 @@
 
 (* Tested on Poly/ML and MLTon. *)
 
+
+(* Parse. *)
+
+fun parse_string s =
+    let fun eq_char a b = a = b
+        val els = String.tokens (eq_char #",") s
+        fun parse_range el =
+            let val range = String.tokens (eq_char #"-") el
+                fun parse s = valOf (LargeInt.fromString s)
+            in case range of
+                   from :: to :: [] => (parse from, parse to)
+                 | _ => raise Fail "Input malformed."
+            end
+    in map parse_range els
+    end
+
+fun parse_input_file path =
+    let val file = TextIO.openIn path
+        val input = TextIO.inputAll file
+        val _ = TextIO.closeIn file
+    in parse_string input
+    end
+
+        
+(* Solve. *)
+
 fun even n = n mod 2 = 0
 fun num_of_digits n = trunc (Math.log10 n) + 1
 fun is_invalid_part1 n =
@@ -30,25 +56,8 @@ fun sum_invalids_in_ranges check_fn ranges =
     in sum (map (check_range check_fn) ranges)
     end
 
-fun parse_string s =
-    let fun eq_char a b = a = b
-        val els = String.tokens (eq_char #",") s
-        fun parse_range el =
-            let val range = String.tokens (eq_char #"-") el
-                fun parse s = valOf (LargeInt.fromString s)
-            in case range of
-                from :: to :: [] => (parse from, parse to)
-                | _ => raise Fail "Input malformed."
-            end
-    in map parse_range els
-    end
-
-fun parse_input_file path =
-    let val file = TextIO.openIn path
-        val input = TextIO.inputAll file
-        val _ = TextIO.closeIn file
-    in parse_string input
-    end
+        
+(* Execute! *)
         
 val ranges = parse_input_file "input2.txt"
 val part1 = sum_invalids_in_ranges is_invalid_part1 ranges
