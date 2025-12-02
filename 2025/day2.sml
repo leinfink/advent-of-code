@@ -1,5 +1,7 @@
 (* SML '97 *)
 
+(* Tested on Poly/ML and MLTon. *)
+
 fun even n = n mod 2 = 0
 fun num_of_digits n = trunc (Math.log10 n) + 1
 fun is_invalid_part1 n =

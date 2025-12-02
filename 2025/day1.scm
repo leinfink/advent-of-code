@@ -1,5 +1,8 @@
 ;; Scheme R7RS-small
 
+;; Tested on Chibi Scheme and Guile in R7RS-mode.
+;; Using Akku, works on Chez Scheme as well.
+
 (import (scheme base)
         (scheme file)
         (scheme write))
