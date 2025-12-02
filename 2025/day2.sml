@@ -2,58 +2,63 @@
 
 (* Tested on Poly/ML and MLTon. *)
 
+structure L = LargeInt
 
 (* Parse. *)
 
-fun parse_string s =
-    let fun eq_char a b = a = b
-        val els = String.tokens (eq_char #",") s
-        fun parse_range el =
-            let val range = String.tokens (eq_char #"-") el
-                fun parse s = valOf (LargeInt.fromString s)
-            in case range of
-                   from :: to :: [] => (parse from, parse to)
-                 | _ => raise Fail "Input malformed."
-            end
-    in map parse_range els
+fun split (delim:char) (s:string) : string list =
+    String.tokens (fn c => c = delim) s
+
+fun parse (s:string) : (L.int * L.int) list =
+    let exception InputMalformed
+        fun parse_num s =
+            case L.fromString s of
+                SOME n => n
+              | NONE => raise InputMalformed
+        fun parse_range s =
+            case split #"-" s of
+                from :: to :: [] => (parse_num from, parse_num to)
+              | _ => raise InputMalformed
+    in
+        map parse_range (split #"," s)
     end
 
-fun parse_input_file path =
+fun parse_input_file (path:string) : (L.int * L.int) list =
     let val file = TextIO.openIn path
         val input = TextIO.inputAll file
         val _ = TextIO.closeIn file
-    in parse_string input
+    in parse input
     end
 
         
 (* Solve. *)
 
-fun even n = n mod 2 = 0
-fun num_of_digits n = trunc (Math.log10 n) + 1
-fun is_invalid_part1 n =
+fun even (n:int) : bool = n mod 2 = 0
+fun num_of_digits (n:real) : int = trunc (Math.log10 n) + 1
+
+fun is_invalid_part1 (n:L.int) : bool =
     let val n = Real.fromLargeInt n
         val ndigits = num_of_digits n
     in
-        if even ndigits
-        then let val pow10 = Math.pow (10.0, Real.fromInt (ndigits div 2))
-                 val quot = trunc (n / pow10)
-                 val rem = trunc (Real.rem (n, pow10))
-             in quot = rem
-             end
-        else false
+        even ndigits
+        andalso
+        let val pow10 = Math.pow (10.0, Real.fromInt (ndigits div 2))
+            val quot = trunc (n / pow10)
+            val rem = trunc (Real.rem (n, pow10))
+        in quot = rem
+        end
     end
         
-fun check_range check_fn (from, to) =
+fun check_range (check: (L.int -> bool)) (from: L.int, to: L.int) : L.int =
     let fun recurse count n =
-            if n > to
-            then count
-            else recurse (count + (if check_fn n then n else 0)) (n + 1)
+            if n > to then count
+            else recurse (count + (if check n then n else 0)) (n + 1)
     in recurse 0 from
     end
 
-fun sum_invalids_in_ranges check_fn ranges =
+fun sum_invalids_in_ranges (check:(L.int -> bool)) (ranges: (L.int * L.int) list) : L.int =
     let val sum = foldl (op +) 0
-    in sum (map (check_range check_fn) ranges)
+    in sum (map (check_range check) ranges)
     end
 
         
@@ -61,5 +66,5 @@ fun sum_invalids_in_ranges check_fn ranges =
         
 val ranges = parse_input_file "input2.txt"
 val part1 = sum_invalids_in_ranges is_invalid_part1 ranges
-fun main () = print ((LargeInt.toString part1) ^ "\n")
+fun main () = print ((L.toString part1) ^ "\n")
 val _ = main()
