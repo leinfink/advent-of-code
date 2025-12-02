@@ -56,7 +56,7 @@ fun check_range (check: (L.int -> bool)) (from: L.int, to: L.int) : L.int =
     in recurse 0 from
     end
 
-fun sum_invalids_in_ranges (check:(L.int -> bool)) (ranges: (L.int * L.int) list) : L.int =
+fun sum_invalids (check:(L.int -> bool)) (ranges:(L.int * L.int) list) : L.int =
     let val sum = foldl (op +) 0
     in sum (map (check_range check) ranges)
     end
@@ -65,6 +65,6 @@ fun sum_invalids_in_ranges (check:(L.int -> bool)) (ranges: (L.int * L.int) list
 (* Execute! *)
         
 val ranges = parse_input_file "input2.txt"
-val part1 = sum_invalids_in_ranges is_invalid_part1 ranges
-fun main () = print ((L.toString part1) ^ "\n")
-val _ = main()
+val part1 = sum_invalids is_invalid_part1 ranges
+fun main () = print ((L.toString part1) ^ "\n") (* main() for polyc *)
+val _ = main() (* for MLTon *)
