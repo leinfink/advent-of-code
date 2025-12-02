@@ -1,6 +1,6 @@
 (* SML '97 *)
 
-(* Tested on Poly/ML and MLTon. *)
+(* Tested on Poly/ML, MLTon, and SML/NJ. *)
 
 structure L = LargeInt
 
