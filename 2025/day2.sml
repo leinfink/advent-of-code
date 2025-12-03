@@ -34,43 +34,39 @@ fun parse_input_file (path:string) : (L.int * L.int) list =
 (* Solve. *)
 
 fun even (n:int) : bool = n mod 2 = 0
-fun num_of_digits (n:real) : int = trunc (Math.log10 n) + 1
+fun num_of_digits (n:L.int) : int = trunc (Math.log10 (Real.fromLargeInt n)) + 1
 
 fun is_invalid_part1 (n:L.int) : bool =
-    let val n = Real.fromLargeInt n
-        val ndigits = num_of_digits n
+    let val ndigits = num_of_digits n
+        val n = Real.fromLargeInt n
     in
         even ndigits
         andalso
         let val pow10 = Math.pow (10.0, Real.fromInt (ndigits div 2))
-            val quot = trunc (n / pow10)
-            val rem = trunc (Real.rem (n, pow10))
+            val quot = trunc (n / pow10) and rem = trunc (Real.rem (n, pow10))
         in quot = rem
         end
     end
 
-fun digit_at_pos (n:L.int) (p:int) : int =
-    valOf (Int.fromString (Char.toString (List.nth ((explode (L.toString n)), p))))
-    (* let val v = Real.rem (n, Math.pow (10.0, real (p+1))) *)
-    (*     val mag = trunc (Math.pow (10.0, real (trunc (Math.log10 v)))) *)
-    (* in (trunc v) div mag *)
-    (* end         *)
+fun digit_at_pos (digs: int list) (p:int) : int = List.nth (digs, p)
+
+fun digits (n:L.int) : int list =
+    let val chars = explode (L.toString n)
+    in map (fn c => valOf (Int.fromString (Char.toString c))) chars
+    end
 
 fun is_invalid_part2 (n:L.int) : bool =
-    let val nr = Real.fromLargeInt n
-        val ndigits = num_of_digits nr
-        fun repeated pos =
-            let fun loop d =
-                    d >= ndigits
-                    orelse
-                    (digit_at_pos n d = (digit_at_pos n (d mod (pos+1)))
-                     andalso loop (d+1))
-            in loop 0
-            end
+    let val digs = digits n and ndigits = num_of_digits n
+        val n = Real.fromLargeInt n
+        fun repeated pos cur =
+            cur >= ndigits
+            orelse
+            (digit_at_pos digs cur = (digit_at_pos digs (cur mod (pos+1)))
+             andalso repeated pos (cur+1))
         fun recurse pos =
             pos < (ndigits-1)
             andalso
-            ((ndigits mod (pos+1) = 0 andalso repeated pos)
+            ((ndigits mod (pos+1) = 0 andalso repeated pos 0)
              orelse
              recurse (pos + 1))
     in
