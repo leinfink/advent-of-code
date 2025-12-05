@@ -33,5 +33,5 @@ let count_fresh_ids (ranges: range list) (ids:int list) : int =
 
 (* Execute. *)
     
-let (ranges, ids) = parse "dummy.txt"
+let (ranges, ids) = parse "input5.txt"
 let part1 = count_fresh_ids ranges ids
