@@ -1,15 +1,9 @@
-use std::convert::TryInto;
 use std::fs;
 
 #[derive(PartialEq, Debug)]
 enum GridElement {
     Paper,
     Empty,
-}
-
-struct Delta {
-    row: isize,
-    col: isize,
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -34,7 +28,7 @@ impl Pos {
         }
     }
 
-    fn new_relative<'a, T: GridBounds>(&self, grid: &'a T, delta: Delta) -> Result<Self, &'a str> {
+    fn new_rel<'a, T: GridBounds>(&self, grid: &'a T, delta: Delta) -> Result<Self, &'a str> {
         Pos::new(
             grid,
             (self.row as isize) + delta.row,
@@ -43,9 +37,9 @@ impl Pos {
     }
 }
 
-struct Grid {
-    rows: Vec<Vec<GridElement>>,
-    col_len: usize,
+struct Delta {
+    row: isize,
+    col: isize,
 }
 
 #[derive(Debug)]
@@ -62,6 +56,21 @@ trait GridBounds {
 impl GridBounds for SparseGrid {
     fn row_len(&self) -> usize {
         self.row_len
+    }
+
+    fn col_len(&self) -> usize {
+        self.col_len
+    }
+}
+
+struct Grid {
+    rows: Vec<Vec<GridElement>>,
+    col_len: usize,
+}
+
+impl GridBounds for Grid {
+    fn row_len(&self) -> usize {
+        self.rows.len()
     }
 
     fn col_len(&self) -> usize {
@@ -103,7 +112,7 @@ impl Grid {
     }
 
     fn get_relative(&self, pos: Pos, delta: Delta) -> Option<&GridElement> {
-        match pos.new_relative(self, delta) {
+        match pos.new_rel(self, delta) {
             Ok(new) => Some(self.get_at_pos(new)),
             Err(_) => None,
         }
@@ -114,16 +123,6 @@ impl Grid {
             row_len: self.row_len(),
             col_len: self.col_len(),
         }
-    }
-}
-
-impl GridBounds for Grid {
-    fn row_len(&self) -> usize {
-        self.rows.len()
-    }
-
-    fn col_len(&self) -> usize {
-        self.col_len
     }
 }
 
@@ -149,65 +148,35 @@ impl Iterator for GridIntoIterator {
     type Item = Pos;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let next;
-        if let Some(pos) = self.pos {
-            next = match pos.new_relative(&self.grid, Delta { row: 0, col: 1 }) {
-                Ok(new) => Some(new),
-                Err(_) => match pos.new_relative(
-                    &self.grid,
-                    Delta {
-                        row: 1,
-                        col: -((self.grid.col_len as isize) - 1),
-                    },
-                ) {
-                    Ok(new) => Some(new),
-                    Err(_) => None,
-                },
-            };
-        } else {
-            next = Some(Pos { row: 0, col: 0 });
-        }
+        self.pos = match self.pos {
+            None => Some(Pos { row: 0, col: 0 }),
+            Some(pos) => {
+                let move_on_row = || pos.new_rel(&self.grid, Delta { row: 0, col: 1 });
 
-        self.pos = next;
-        next
+                let dx = -((self.grid.col_len as isize) - 1);
+                let move_next_row = || pos.new_rel(&self.grid, Delta { row: 1, col: dx });
+
+                match move_on_row() {
+                    Ok(new) => Some(new),
+                    Err(_) => match move_next_row() {
+                        Ok(new) => Some(new),
+                        Err(_) => None,
+                    },
+                }
+            }
+        };
+        self.pos
     }
 }
 
-fn main() {
-    let mut grid = parse("input4.txt");
-    let count = grid
-        .into_sparse()
+fn get_removables(grid: &Grid) -> Vec<Pos> {
+    grid.into_sparse()
         .into_iter()
         .filter(|pos| {
             *grid.get_at_pos(*pos) == GridElement::Paper
                 && count_surroundings(&grid, *pos, GridElement::Paper) < 4
         })
-        .count();
-    println!("{count} rolls of paper can be accessed by a forklift.");
-    // part 2
-    let mut removable: Vec<Pos>;
-    let mut count_removables = 0;
-    loop {
-        removable = grid
-            .into_sparse()
-            .into_iter()
-            .filter(|pos| {
-                *grid.get_at_pos(*pos) == GridElement::Paper
-                    && count_surroundings(&grid, *pos, GridElement::Paper) < 4
-            })
-            .collect();
-
-        if removable.len() == 0 {
-            break;
-        }
-
-        count_removables += removable.len();
-
-        for pos in &removable {
-            grid.set_at_pos(*pos, GridElement::Empty);
-        }
-    }
-    println!("{count_removables} rolls of paper can be removed in total.");
+        .collect()
 }
 
 fn count_surroundings(grid: &Grid, pos: Pos, look_for: GridElement) -> u8 {
@@ -235,21 +204,17 @@ fn count_surroundings(grid: &Grid, pos: Pos, look_for: GridElement) -> u8 {
                 None => false,
             }
         })
-        .count();
-    return count.try_into().unwrap();
+        .count() as u8;
+    count
 }
 
 fn parse(path: &str) -> Grid {
-    let contents = fs::read_to_string(path).expect("file not readable");
+    let contents = fs::read_to_string(path).expect("File not readable.");
     let rows: Vec<&str> = contents.split('\n').collect();
 
     let mut grid = Grid::new();
 
     for r in rows {
-        if r.is_empty() {
-            continue;
-        }
-
         let row: Vec<GridElement> = r
             .chars()
             .map(|c| match c {
@@ -262,4 +227,29 @@ fn parse(path: &str) -> Grid {
     }
 
     grid
+}
+
+fn main() {
+    // part 1
+    let mut grid = parse("input4.txt");
+    let count = get_removables(&grid).len();
+    println!("Part 1: {count} rolls of paper can be accessed by a forklift.");
+
+    // part 2
+    let mut removable: Vec<Pos>;
+    let mut total_removables = 0;
+    loop {
+        removable = get_removables(&grid);
+
+        if removable.len() == 0 {
+            break;
+        }
+
+        total_removables += removable.len();
+
+        for pos in &removable {
+            grid.set_at_pos(*pos, GridElement::Empty);
+        }
+    }
+    println!("Part 2: {total_removables} rolls of paper can be removed in total.");
 }
