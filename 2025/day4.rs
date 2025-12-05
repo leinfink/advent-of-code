@@ -48,6 +48,7 @@ struct Grid {
     col_len: usize,
 }
 
+#[derive(Debug)]
 struct SparseGrid {
     row_len: usize,
     col_len: usize,
@@ -92,6 +93,15 @@ impl Grid {
         self.rows.get(pos.row).unwrap().get(pos.col).unwrap()
     }
 
+    fn set_at_pos(&mut self, pos: Pos, new: GridElement) -> () {
+        *self
+            .rows
+            .get_mut(pos.row)
+            .unwrap()
+            .get_mut(pos.col)
+            .unwrap() = new;
+    }
+
     fn get_relative(&self, pos: Pos, delta: Delta) -> Option<&GridElement> {
         match pos.new_relative(self, delta) {
             Ok(new) => Some(self.get_at_pos(new)),
@@ -129,6 +139,7 @@ impl IntoIterator for SparseGrid {
     }
 }
 
+#[derive(Debug)]
 struct GridIntoIterator {
     grid: SparseGrid,
     pos: Option<Pos>,
@@ -163,7 +174,7 @@ impl Iterator for GridIntoIterator {
 }
 
 fn main() {
-    let grid = parse("input4.txt");
+    let mut grid = parse("input4.txt");
     let count = grid
         .into_sparse()
         .into_iter()
@@ -172,7 +183,31 @@ fn main() {
                 && count_surroundings(&grid, *pos, GridElement::Paper) < 4
         })
         .count();
-    println!("{count} rolls of paper can be accessed by a forklift.")
+    println!("{count} rolls of paper can be accessed by a forklift.");
+    // part 2
+    let mut removable: Vec<Pos>;
+    let mut count_removables = 0;
+    loop {
+        removable = grid
+            .into_sparse()
+            .into_iter()
+            .filter(|pos| {
+                *grid.get_at_pos(*pos) == GridElement::Paper
+                    && count_surroundings(&grid, *pos, GridElement::Paper) < 4
+            })
+            .collect();
+
+        if removable.len() == 0 {
+            break;
+        }
+
+        count_removables += removable.len();
+
+        for pos in &removable {
+            grid.set_at_pos(*pos, GridElement::Empty);
+        }
+    }
+    println!("{count_removables} rolls of paper can be removed in total.");
 }
 
 fn count_surroundings(grid: &Grid, pos: Pos, look_for: GridElement) -> u8 {
