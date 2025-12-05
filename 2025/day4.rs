@@ -152,10 +152,8 @@ impl Iterator for GridIntoIterator {
             None => Some(Pos { row: 0, col: 0 }),
             Some(pos) => {
                 let move_on_row = || pos.new_rel(&self.grid, Delta { row: 0, col: 1 });
-
                 let dx = -((self.grid.col_len as isize) - 1);
                 let move_next_row = || pos.new_rel(&self.grid, Delta { row: 1, col: dx });
-
                 match move_on_row() {
                     Ok(new) => Some(new),
                     Err(_) => match move_next_row() {
@@ -211,45 +209,34 @@ fn count_surroundings(grid: &Grid, pos: Pos, look_for: GridElement) -> u8 {
 fn parse(path: &str) -> Grid {
     let contents = fs::read_to_string(path).expect("File not readable.");
     let rows: Vec<&str> = contents.split('\n').collect();
-
     let mut grid = Grid::new();
-
     for r in rows {
         let row: Vec<GridElement> = r
             .chars()
             .map(|c| match c {
                 '.' => GridElement::Empty,
                 '@' => GridElement::Paper,
-                _ => panic!(),
+                _ => panic!("Unknown element '{}'.", c),
             })
             .collect();
         let _ = grid.add_row(row);
     }
-
     grid
 }
 
 fn main() {
-    // part 1
     let mut grid = parse("input4.txt");
-    let count = get_removables(&grid).len();
-    println!("Part 1: {count} rolls of paper can be accessed by a forklift.");
+    let mut removable = get_removables(&grid);
+    let mut total_removables = get_removables(&grid).len();
 
-    // part 2
-    let mut removable: Vec<Pos>;
-    let mut total_removables = 0;
-    loop {
-        removable = get_removables(&grid);
+    println!("Part 1: {total_removables} rolls of paper can be accessed by a forklift.");
 
-        if removable.len() == 0 {
-            break;
-        }
-
-        total_removables += removable.len();
-
+    while removable.len() > 0 {
         for pos in &removable {
             grid.set_at_pos(*pos, GridElement::Empty);
         }
+        removable = get_removables(&grid);
+        total_removables += removable.len();
     }
     println!("Part 2: {total_removables} rolls of paper can be removed in total.");
 }
