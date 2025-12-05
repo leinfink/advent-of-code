@@ -31,8 +31,7 @@ let count_fresh_ids (ranges: range list) (ids:int list) : int =
   let add1_if_fresh n id = n + if fresh id ranges then 1 else 0 in
   List.fold_left add1_if_fresh 0 ids
 
-
-type range_for_merge = {low: int; mutable high: int; mutable active: bool}
+type range_for_merge = {mutable low: int; mutable high: int; mutable active: bool}
 
 let prepare_ranges (ranges: range list) =
   let transform (l, h) = {low = l; high = h; active = true} in
@@ -42,11 +41,10 @@ let prepare_ranges (ranges: range list) =
   for i = 0 to Array.length ranges - 1 do
     let cur = ranges.(i) in
     if cur.low <= !highest then
-      ((if cur.high > !highest then
-         (ranges.(!highest_index).high <- cur.high;
-         highest := cur.high)
-       else ());
-       ranges.(i).active <- false)
+      (ranges.(i).active <- false;
+       if cur.high > !highest then
+         (highest := cur.high;
+          ranges.(!highest_index).high <- cur.high))
     else
       (highest := cur.high;
        highest_index := i)
@@ -54,12 +52,15 @@ let prepare_ranges (ranges: range list) =
   ranges
 
 let count_ranges ranges =
-  let count n range = n + if range.active then range.high - range.low + 1 else 0 in
+  let count n {high; low; active} = n + if active then high - low + 1 else 0 in
   Array.fold_left count 0 ranges
 
 (* Execute. *)
     
 let (ranges, ids) = parse "input5.txt"
 let part1 = count_fresh_ids ranges ids
-let prep = prepare_ranges ranges
 let part2  = prepare_ranges ranges |> count_ranges
+  
+let _ =
+  Printf.printf "Part 1: %d\n" part1;
+  Printf.printf "Part 2: %d\n" part2
