@@ -1,5 +1,7 @@
 (* OCaml 5.4.0 *)
+
 type range = (int * int)
+type range_for_merge = {low: int; mutable high: int; mutable active: bool}
 
 (* Parse. *)
 
@@ -31,9 +33,7 @@ let count_fresh_ids (ranges: range list) (ids:int list) : int =
   let add1_if_fresh n id = n + if fresh id ranges then 1 else 0 in
   List.fold_left add1_if_fresh 0 ids
 
-type range_for_merge = {mutable low: int; mutable high: int; mutable active: bool}
-
-let prepare_ranges (ranges: range list) =
+let prepare_ranges (ranges: range list) : range_for_merge array =
   let transform (l, h) = {low = l; high = h; active = true} in
   let ranges = ranges |> List.map transform |> Array.of_list in
   let highest = ref 0 and highest_index = ref 0 in
@@ -51,7 +51,7 @@ let prepare_ranges (ranges: range list) =
   done;
   ranges
 
-let count_ranges ranges =
+let count_ranges (ranges: range_for_merge array) : int  =
   let count n {high; low; active} = n + if active then high - low + 1 else 0 in
   Array.fold_left count 0 ranges
 
