@@ -227,9 +227,11 @@ fn parse(path: &str) -> Grid {
 fn main() {
     let mut grid = parse("input4.txt");
     let mut removable = get_removables(&grid);
-    let mut total_removables = get_removables(&grid).len();
+    let first_removables = get_removables(&grid).len();
 
-    println!("Part 1: {total_removables} rolls of paper can be accessed by a forklift.");
+    println!("Part 1: {first_removables} rolls of paper can be accessed by a forklift.");
+
+    let mut total_removables = first_removables;
 
     while removable.len() > 0 {
         for pos in &removable {
