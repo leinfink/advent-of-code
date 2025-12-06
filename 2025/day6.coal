@@ -23,6 +23,9 @@
          (export
           solve))
 
+;; Uncomment for interactive development.
+;; (coalton:coalton-toplevel 
+
 ;;; Define Types.
 
 (define-type Operator
@@ -98,6 +101,9 @@
 (declare solve (Unit -> IFix))
 (define (solve)
   (calculate (parse (read-lines "input6.txt"))))
+
+;; Uncomment for interactive development.
+;; )
 
 ;;; Stuff to use when in .lisp instead of .coal.
 ;;; In that case, also wrap everything in (coalton-toplevel).
