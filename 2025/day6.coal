@@ -1,0 +1,121 @@
+;; -*- mode: lisp -*-
+
+;;; Coalton 0.0.1
+
+;;; To compile:
+;;; (coalton-impl/entry:compile (coalton-impl/source:make-source-file "day6.coal"))
+;;; Then run:
+;;; (coalton:coalton (day6:solve))
+
+;;; It's way easier to operate within usual .lisp files (see below) in the
+;;; typical REPL-manner, but I wanted to try a 'standalone' Coalton program.
+
+;;; Package definition (only in .coal files).
+(package day6
+         "Advent of Code 2025, Day 6, in Coalton"
+         (import
+          coalton-prelude
+          (coalton-library/file as file)
+          (coalton-library/list as list)
+          (coalton-library/string as string)
+          (coalton-library/vector as vector)
+          (coalton-library/iterator as iter))
+         (export
+          solve))
+
+;;; Define Types.
+(define-type Operator
+  Add
+  Mult)
+
+(define-type-alias Operators (Vector Operator))
+(define-type-alias Operation (IFix -> IFix -> IFix))
+(define-type-alias Numbers (Vector IFix))
+
+;;; Parse.
+(declare read-lines (Into :a file:Pathname => :a -> (List String)))
+(define (read-lines path) (unwrap (file:read-file-lines path)))
+
+(declare parse ((List String) -> (Tuple (List Numbers) Operators)))
+(define (parse lines)
+  (Tuple (parse-numbers (list:init lines))
+         (parse-line parse-operator (unwrap (list:last lines)))))
+
+(declare parse-line ((String -> (Optional :a)) -> String -> (Vector :a)))
+(define (parse-line fun line)
+  (pipe (split #\Space line)
+        iter:into-iter
+        (iter:filter-map! fun)
+        iter:collect!))
+
+(declare parse-operator (String -> (Optional Operator)))
+(define (parse-operator op)
+  (match op
+    ("+" (Some Add))
+    ("*" (Some Mult))
+    (_ None)))
+
+(declare parse-ifix (String -> (Optional IFix)))
+(define (parse-ifix str)
+  (match (string:parse-int str)
+    ((Some i) (Some (the IFix (unwrap (tryInto i)))))
+    ((None) None)))
+
+(declare parse-numbers ((List String) -> (List Numbers)))
+(define (parse-numbers lines)
+  (map (parse-line parse-ifix) lines))
+
+;;; Solve.
+(declare do-operation ((List Numbers) -> Operators -> UFix -> IFix))
+(define (do-operation num-list operators i)
+  (match (vector:index i operators)
+    ((Some (Add)) (calc num-list i + 0))
+    ((Some (Mult)) (calc num-list i * 1))
+    ((None) 0)))
+
+(declare calc ((List Numbers) -> UFix -> Operation -> IFix -> IFix))
+(define (calc num-list i op init)
+  (fold (fn (acc line)
+          (op (the IFix acc)
+              (match (vector:index i line)
+                ((Some i) i)
+                ((None) init))))
+        init
+        num-list))
+
+(declare calculate (Tuple (List Numbers) Operators -> IFix))
+(define (calculate (Tuple num-list operators))
+  (let ((max (vector:length operators)))
+    (rec % ((i 0) (sum 0))
+      (if (< i max)
+          (% (+ i 1) (+ sum (do-operation num-list operators i)))
+          sum))))
+
+
+;;; Execute.
+(declare solve (Unit -> IFix))
+(define (solve)
+  (calculate (parse (read-lines "input6.txt"))))
+
+;;; Stuff to use when in .lisp instead of .coal.
+;;; In that case, also wrap everything in (coalton-toplevel).
+
+;; (asdf:defsystem #:day6
+;;   :class :package-inferred-system
+;;   :depends-on (#:coalton))
+
+;; (asdf:load-system :day6)
+
+;; (defpackage #:day6
+;;   (:use 
+;;    #:coalton
+;;    #:coalton-prelude)
+;;   (:local-nicknames
+;;    (#:file #:coalton-library/file)
+;;    (#:list #:coalton-library/list)
+;;    (#:string #:coalton-library/string)
+;;    (#:vector #:coalton-library/vector)
+;;    (#:iter #:coalton-library/iterator)))
+
+;; (in-package #:day6)
+;; (named-readtables:in-readtable coalton:coalton)
