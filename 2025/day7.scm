@@ -45,13 +45,8 @@
               (beams cur))
     splits))
 
-(define (count-splits lines)
-  (let loop ((count 0) (lines lines))
-    (if (null? lines)
-        count
-        (loop (+ count (length (beams (car lines)))) (cdr lines)))))
-
 ;; Execute.
+
 (define (execute)
   (let loop ((lines (parse "2025/dummy.txt"))
              (splits-count 0))
